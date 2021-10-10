@@ -1,0 +1,821 @@
+﻿<Window x:Class="ScrabbleSolver.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="850" Width="1000" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <!-- Menu with actions -->
+        <Menu Height="22" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+            <MenuItem Header="File">
+                <MenuItem Header="Open last game"/>
+                <MenuItem Header="Open game"/>
+                <MenuItem Header="Save game"/>
+                <MenuItem Header="Reset game"/>
+            </MenuItem>
+            <MenuItem Header="Action">
+                <MenuItem Header="Clear letters"/>
+                <MenuItem Header="Override scoring"/>
+                <MenuItem Header="Override player turn"/>
+                <MenuItem Header="Override board"/>
+                <MenuItem Header="Add player" Click="AddPlayerMenuItemClick"/>
+            </MenuItem>
+        </Menu>
+        
+        <!-- Greeting -->
+        <TextBlock HorizontalAlignment="Left" Margin="10,27,0,0" TextWrapping="Wrap" Text="ScrabbleSolver" VerticalAlignment="Top" FontSize="24"/>
+        <TextBlock HorizontalAlignment="Left" Margin="10,64,0,0" TextWrapping="Wrap" Text="From CyanCoding" VerticalAlignment="Top"/>
+
+        <!-- Scoring menu -->
+        <TextBlock HorizontalAlignment="Right" VerticalAlignment="Bottom" Text="Scoring" FontSize="22" Margin="0,0,10,320" Width="250"/>
+        <Border BorderBrush="Black" BorderThickness="2" Height="300" Width="250" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,10">
+            <Grid x:Name="ScoringGrid" Margin="5,5,5,5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="180"/>
+                    <ColumnDefinition Width="50"/>
+                </Grid.ColumnDefinitions>
+                <!-- This gets filled automatically by Players.AddPlayer() -->
+            </Grid>
+        </Border>
+        
+        <!-- Player turns -->
+        <Border BorderBrush="Black" BorderThickness="2" Height="100" Width="250" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,200,10,0">
+            <Grid Margin="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock x:Name="TurnTextBox" Text="Turn: " FontSize="22" Grid.ColumnSpan="2"/>
+                <Button Grid.Column="0" x:Name="NextTurn" Height="30" VerticalAlignment="Bottom" Content="Next turn" FontSize="16" Width="100" Click="nextTurn_Click"/>
+                <Button x:Name="TurnEditTable" Height="30" Grid.Column="1" VerticalAlignment="Bottom" Content="Edit board" FontSize="16" Width="100" Click="editBoard_Click"/>
+            </Grid>
+        </Border>
+
+        <!-- Your letters -->
+        <Border BorderBrush="Black" BorderThickness="2" Height="100" Width="250" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,50,10,0">
+            <Grid Margin="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                
+                <TextBox x:Name="YourLettersBox" HorizontalAlignment="Stretch" Grid.ColumnSpan="3" TextWrapping="Wrap" Text="LETTERS" HorizontalContentAlignment="Center" MaxLength="7" VerticalAlignment="Top" FontSize="30" IsReadOnly="True"/>
+                <Button Grid.Column="0" x:Name="SetButton" Height="30" Content="Set" FontSize="16" VerticalAlignment="Bottom" ToolTip="Change the letters in your hand" Click="SetButton_Click"/>
+                <Button Height="30" Content="Fill" FontSize="16" Grid.Column="1" VerticalAlignment="Bottom" ToolTip="Find the best spot for your letters" Click="FillButton_Click"/>
+                <Button Height="30" Content="Shuffle" FontSize="16"  Grid.Column="2" VerticalAlignment="Bottom" ToolTip="Scramble your letters" Click="ShuffleButton_Click"/>
+            </Grid>
+        </Border>
+
+        <!-- Grid board -->
+        <Grid x:Name="BoardGrid" Width="675" Height="675" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="10,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="45"/>
+                <ColumnDefinition Width="45"/>
+                <ColumnDefinition Width="45"/>
+                <ColumnDefinition Width="45"/>
+                <ColumnDefinition Width="45"/>
+                <ColumnDefinition Width="45"/>
+                <ColumnDefinition Width="45"/>
+                <ColumnDefinition Width="45"/>
+                <ColumnDefinition Width="45"/>
+                <ColumnDefinition Width="45"/>
+                <ColumnDefinition Width="45"/>
+                <ColumnDefinition Width="45"/>
+                <ColumnDefinition Width="45"/>
+                <ColumnDefinition Width="45"/>
+                <ColumnDefinition Width="45"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="45"/>
+                <RowDefinition Height="45"/>
+                <RowDefinition Height="45"/>
+                <RowDefinition Height="45"/>
+                <RowDefinition Height="45"/>
+                <RowDefinition Height="45"/>
+                <RowDefinition Height="45"/>
+                <RowDefinition Height="45"/>
+                <RowDefinition Height="45"/>
+                <RowDefinition Height="45"/>
+                <RowDefinition Height="45"/>
+                <RowDefinition Height="45"/>
+                <RowDefinition Height="45"/>
+                <RowDefinition Height="45"/>
+                <RowDefinition Height="45"/>
+            </Grid.RowDefinitions>
+
+            <!-- Middle box -->
+            <Border Grid.Row="7" Grid.Column="7" BorderBrush="Gold" BorderThickness="2">
+                <TextBox x:Name="Box7X7" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+
+            <!-- 3x word score borders -->
+            <Border Grid.Row="0" Grid.Column="0" BorderBrush="Red" BorderThickness="2" ToolTip="3x word score">
+                <TextBox x:Name="Box0X0" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="0" Grid.Column="7" BorderBrush="Red" BorderThickness="2" ToolTip="3x word score">
+                <TextBox x:Name="Box0X7" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="0" Grid.Column="14" BorderBrush="Red" BorderThickness="2" ToolTip="3x word score">
+                <TextBox x:Name="Box0X14" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="7" Grid.Column="0" BorderBrush="Red" BorderThickness="2" ToolTip="3x word score">
+                <TextBox x:Name="Box7X0" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="7" Grid.Column="14" BorderBrush="Red" BorderThickness="2" ToolTip="3x word score">
+                <TextBox x:Name="Box7X14" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="14" Grid.Column="0" BorderBrush="Red" BorderThickness="2" ToolTip="3x word score">
+                <TextBox x:Name="Box14X0" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="14" Grid.Column="7" BorderBrush="Red" BorderThickness="2" ToolTip="3x word score">
+                <TextBox x:Name="Box14X7" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="14" Grid.Column="14" BorderBrush="Red" BorderThickness="2" ToolTip="3x word score">
+                <TextBox x:Name="Box14X14" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+
+            <!-- Double word score -->
+            <Border Grid.Row="1" Grid.Column="1" BorderBrush="Blue" BorderThickness="2" ToolTip="2x word score">
+                <TextBox x:Name="Box1X1" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="1" Grid.Column="13" BorderBrush="Blue" BorderThickness="2" ToolTip="2x word score">
+                <TextBox x:Name="Box1X13" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="2" Grid.Column="2" BorderBrush="Blue" BorderThickness="2" ToolTip="2x word score">
+                <TextBox x:Name="Box2X2" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="2" Grid.Column="12" BorderBrush="Blue" BorderThickness="2" ToolTip="2x word score">
+                <TextBox x:Name="Box2X12" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="3" Grid.Column="3" BorderBrush="Blue" BorderThickness="2" ToolTip="2x word score">
+                <TextBox x:Name="Box3X3" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="3" Grid.Column="11" BorderBrush="Blue" BorderThickness="2" ToolTip="2x word score">
+                <TextBox x:Name="Box3X11" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="4" Grid.Column="4" BorderBrush="Blue" BorderThickness="2" ToolTip="2x word score">
+                <TextBox x:Name="Box4X4" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="4" Grid.Column="10" BorderBrush="Blue" BorderThickness="2" ToolTip="2x word score">
+                <TextBox x:Name="Box4X10" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+
+            <Border Grid.Row="13" Grid.Column="1" BorderBrush="Blue" BorderThickness="2" ToolTip="2x word score">
+                <TextBox x:Name="Box13X1" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="13" Grid.Column="13" BorderBrush="Blue" BorderThickness="2" ToolTip="2x word score">
+                <TextBox x:Name="Box13X13" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="12" Grid.Column="2" BorderBrush="Blue" BorderThickness="2" ToolTip="2x word score">
+                <TextBox x:Name="Box12X2" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="12" Grid.Column="12" BorderBrush="Blue" BorderThickness="2" ToolTip="2x word score">
+                <TextBox x:Name="Box12X12" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="11" Grid.Column="3" BorderBrush="Blue" BorderThickness="2" ToolTip="2x word score">
+                <TextBox x:Name="Box11X3" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="11" Grid.Column="11" BorderBrush="Blue" BorderThickness="2" ToolTip="2x word score">
+                <TextBox x:Name="Box11X11" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="10" Grid.Column="4" BorderBrush="Blue" BorderThickness="2" ToolTip="2x word score">
+                <TextBox x:Name="Box10X4" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="10" Grid.Column="10" BorderBrush="Blue" BorderThickness="2" ToolTip="2x word score">
+                <TextBox x:Name="Box10X10" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+
+            <!-- Triple letter score -->
+            <Border Grid.Row="5" Grid.Column="5" BorderBrush="Green" BorderThickness="2" ToolTip="3x letter score">
+                <TextBox x:Name="Box5X5" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="5" Grid.Column="9" BorderBrush="Green" BorderThickness="2" ToolTip="3x letter score">
+                <TextBox x:Name="Box5X9" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="9" Grid.Column="9" BorderBrush="Green" BorderThickness="2" ToolTip="3x letter score">
+                <TextBox x:Name="Box9X9" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="9" Grid.Column="5" BorderBrush="Green" BorderThickness="2" ToolTip="3x letter score">
+                <TextBox x:Name="Box9X5" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+
+            <Border Grid.Row="5" Grid.Column="1" BorderBrush="Green" BorderThickness="2" ToolTip="3x letter score">
+                <TextBox x:Name="Box5X1" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="9" Grid.Column="1" BorderBrush="Green" BorderThickness="2" ToolTip="3x letter score">
+                <TextBox x:Name="Box9X1" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+
+            <Border Grid.Row="5" Grid.Column="13" BorderBrush="Green" BorderThickness="2" ToolTip="3x letter score">
+                <TextBox x:Name="Box5X13" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="9" Grid.Column="13" BorderBrush="Green" BorderThickness="2" ToolTip="3x letter score">
+                <TextBox x:Name="Box9X13" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+
+            <Border Grid.Row="1" Grid.Column="5" BorderBrush="Green" BorderThickness="2" ToolTip="3x letter score">
+                <TextBox x:Name="Box1X5" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="1" Grid.Column="9" BorderBrush="Green" BorderThickness="2" ToolTip="3x letter score">
+                <TextBox x:Name="Box1X9" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+
+            <Border Grid.Row="13" Grid.Column="5" BorderBrush="Green" BorderThickness="2" ToolTip="3x letter score">
+                <TextBox x:Name="Box13X5" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="13" Grid.Column="9" BorderBrush="Green" BorderThickness="2" ToolTip="3x letter score">
+                <TextBox x:Name="Box13X9" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+
+            <!-- Double letter score -->
+            <Border Grid.Row="6" Grid.Column="6" BorderBrush="CornflowerBlue" BorderThickness="2" ToolTip="2x letter score">
+                <TextBox x:Name="Box6X6" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="6" Grid.Column="8" BorderBrush="CornflowerBlue" BorderThickness="2" ToolTip="2x letter score">
+                <TextBox x:Name="Box6X8" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="8" Grid.Column="6" BorderBrush="CornflowerBlue" BorderThickness="2" ToolTip="2x letter score">
+                <TextBox x:Name="Box8X6" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="8" Grid.Column="8" BorderBrush="CornflowerBlue" BorderThickness="2" ToolTip="2x letter score">
+                <TextBox x:Name="Box8X8" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+
+            <Border Grid.Row="0" Grid.Column="3" BorderBrush="CornflowerBlue" BorderThickness="2" ToolTip="2x letter score">
+                <TextBox x:Name="Box0X3" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="0" Grid.Column="11" BorderBrush="CornflowerBlue" BorderThickness="2" ToolTip="2x letter score">
+                <TextBox x:Name="Box0X11" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="3" Grid.Column="7" BorderBrush="CornflowerBlue" BorderThickness="2" ToolTip="2x letter score">
+                <TextBox x:Name="Box3X7" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="2" Grid.Column="8" BorderBrush="CornflowerBlue" BorderThickness="2" ToolTip="2x letter score">
+                <TextBox x:Name="Box2X8" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="2" Grid.Column="6" BorderBrush="CornflowerBlue" BorderThickness="2" ToolTip="2x letter score">
+                <TextBox x:Name="Box2X6" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+
+            <Border Grid.Row="3" Grid.Column="0" BorderBrush="CornflowerBlue" BorderThickness="2" ToolTip="2x letter score">
+                <TextBox x:Name="Box3X0" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="11" Grid.Column="0" BorderBrush="CornflowerBlue" BorderThickness="2" ToolTip="2x letter score">
+                <TextBox x:Name="Box11X0" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="7" Grid.Column="3" BorderBrush="CornflowerBlue" BorderThickness="2" ToolTip="2x letter score">
+                <TextBox x:Name="Box7X3" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="6" Grid.Column="2" BorderBrush="CornflowerBlue" BorderThickness="2" ToolTip="2x letter score">
+                <TextBox x:Name="Box6X2" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="8" Grid.Column="2" BorderBrush="CornflowerBlue" BorderThickness="2" ToolTip="2x letter score">
+                <TextBox x:Name="Box8X2" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+
+            <Border Grid.Row="3" Grid.Column="14" BorderBrush="CornflowerBlue" BorderThickness="2" ToolTip="2x letter score">
+                <TextBox x:Name="Box3X14" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="11" Grid.Column="14" BorderBrush="CornflowerBlue" BorderThickness="2" ToolTip="2x letter score">
+                <TextBox x:Name="Box11X14" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="7" Grid.Column="11" BorderBrush="CornflowerBlue" BorderThickness="2" ToolTip="2x letter score">
+                <TextBox x:Name="Box7X11" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="6" Grid.Column="12" BorderBrush="CornflowerBlue" BorderThickness="2" ToolTip="2x letter score">
+                <TextBox x:Name="Box6X12" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="8" Grid.Column="12" BorderBrush="CornflowerBlue" BorderThickness="2" ToolTip="2x letter score">
+                <TextBox x:Name="Box8X12" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+
+            <Border Grid.Row="14" Grid.Column="3" BorderBrush="CornflowerBlue" BorderThickness="2" ToolTip="2x letter score">
+                <TextBox x:Name="Box14X3" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="14" Grid.Column="11" BorderBrush="CornflowerBlue" BorderThickness="2" ToolTip="2x letter score">
+                <TextBox x:Name="Box14X11" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="11" Grid.Column="7" BorderBrush="CornflowerBlue" BorderThickness="2" ToolTip="2x letter score">
+                <TextBox x:Name="Box11X7" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="12" Grid.Column="8" BorderBrush="CornflowerBlue" BorderThickness="2" ToolTip="2x letter score">
+                <TextBox x:Name="Box12X8" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="12" Grid.Column="6" BorderBrush="CornflowerBlue" BorderThickness="2" ToolTip="2x letter score">
+                <TextBox x:Name="Box12X6" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+
+            <!-- Regular boxes -->
+            <Border Grid.Row="0" Grid.Column="1" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box0X1" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="0" Grid.Column="2" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box0X2" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="0" Grid.Column="4" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box0X4" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="0" Grid.Column="5" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box0X5" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="0" Grid.Column="6" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box0X6" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="0" Grid.Column="8" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box0X8" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="0" Grid.Column="9" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box0X9" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="0" Grid.Column="10" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box0X10" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="0" Grid.Column="12" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box0X12" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="0" Grid.Column="13" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box0X13" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+
+            <Border Grid.Row="1" Grid.Column="0" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box1X0" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="1" Grid.Column="2" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box1X2" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="1" Grid.Column="3" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box1X3" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="1" Grid.Column="4" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box1X4" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="1" Grid.Column="6" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box1X6" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="1" Grid.Column="7" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box1X7" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="1" Grid.Column="8" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box1X8" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="1" Grid.Column="10" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box1X10" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="1" Grid.Column="11" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box1X11" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="1" Grid.Column="12" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box1X12" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="1" Grid.Column="14" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box1X14" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+
+            <Border Grid.Row="2" Grid.Column="0" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box2X0" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="2" Grid.Column="1" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box2X1" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="2" Grid.Column="3" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box2X3" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="2" Grid.Column="4" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box2X4" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="2" Grid.Column="5" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box2X5" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="2" Grid.Column="7" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box2X7" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="2" Grid.Column="9" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box2X9" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="2" Grid.Column="10" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box2X10" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="2" Grid.Column="11" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box2X11" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="2" Grid.Column="13" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box2X13" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="2" Grid.Column="14" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box2X14" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+
+            <Border Grid.Row="3" Grid.Column="1" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box3X1" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="3" Grid.Column="2" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box3X2" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="3" Grid.Column="4" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box3X4" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="3" Grid.Column="5" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box3X5" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="3" Grid.Column="6" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box3X6" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="3" Grid.Column="8" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box3X8" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="3" Grid.Column="9" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box3X9" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="3" Grid.Column="10" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box3X10" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="3" Grid.Column="12" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box3X12" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="3" Grid.Column="13" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box3X13" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+
+            <Border Grid.Row="4" Grid.Column="0" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box4X0" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="4" Grid.Column="1" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box4X1" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="4" Grid.Column="2" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box4X2" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="4" Grid.Column="3" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box4X3" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="4" Grid.Column="5" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box4X5" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="4" Grid.Column="6" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box4X6" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="4" Grid.Column="7" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box4X7" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="4" Grid.Column="8" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box4X8" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="4" Grid.Column="9" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box4X9" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="4" Grid.Column="11" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box4X11" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="4" Grid.Column="12" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box4X12" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="4" Grid.Column="13" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box4X13" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="4" Grid.Column="14" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box4X14" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+
+            <Border Grid.Row="5" Grid.Column="0" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box5X0" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="5" Grid.Column="2" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box5X2" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="5" Grid.Column="3" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box5X3" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="5" Grid.Column="4" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box5X4" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="5" Grid.Column="6" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box5X6" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="5" Grid.Column="7" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box5X7" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="5" Grid.Column="8" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box5X8" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="5" Grid.Column="10" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box5X10" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="5" Grid.Column="11" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box5X11" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="5" Grid.Column="12" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box5X12" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="5" Grid.Column="14" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box5X14" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+
+            <Border Grid.Row="6" Grid.Column="0" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box6X0" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="6" Grid.Column="1" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box6X1" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="6" Grid.Column="3" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box6X3" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="6" Grid.Column="4" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box6X4" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="6" Grid.Column="5" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box6X5" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="6" Grid.Column="7" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box6X7" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="6" Grid.Column="9" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box6X9" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="6" Grid.Column="10" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box6X10" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="6" Grid.Column="11" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box6X11" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="6" Grid.Column="13" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box6X13" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="6" Grid.Column="14" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box6X14" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+
+            <Border Grid.Row="7" Grid.Column="1" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box7X1" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="7" Grid.Column="2" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box7X2" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="7" Grid.Column="4" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box7X4" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="7" Grid.Column="5" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box7X5" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="7" Grid.Column="6" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box7X6" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="7" Grid.Column="8" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box7X8" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="7" Grid.Column="9" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box7X9" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="7" Grid.Column="10" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box7X10" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="7" Grid.Column="12" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box7X12" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="7" Grid.Column="13" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box7X13" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+
+            <Border Grid.Row="8" Grid.Column="0" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box8X0" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="8" Grid.Column="1" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box8X1" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="8" Grid.Column="3" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box8X3" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="8" Grid.Column="4" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box8X4" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="8" Grid.Column="5" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box8X5" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="8" Grid.Column="7" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box8X7" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="8" Grid.Column="9" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box8X9" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="8" Grid.Column="10" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box8X10" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="8" Grid.Column="11" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box8X11" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="8" Grid.Column="13" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box8X13" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="8" Grid.Column="14" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box8X14" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+
+            <Border Grid.Row="9" Grid.Column="0" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box9X0" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="9" Grid.Column="2" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box9X2" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="9" Grid.Column="3" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box9X3" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="9" Grid.Column="4" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box9X4" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="9" Grid.Column="6" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box9X6" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="9" Grid.Column="7" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box9X7" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="9" Grid.Column="8" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box9X8" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="9" Grid.Column="10" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box9X10" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="9" Grid.Column="11" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box9X11" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="9" Grid.Column="12" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box9X12" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="9" Grid.Column="14" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box9X14" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+
+            <Border Grid.Row="10" Grid.Column="0" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box10X0" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="10" Grid.Column="1" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box10X1" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="10" Grid.Column="2" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box10X2" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="10" Grid.Column="3" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box10X3" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="10" Grid.Column="5" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box10X5" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="10" Grid.Column="6" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box10X6" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="10" Grid.Column="7" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box10X7" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="10" Grid.Column="8" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box10X8" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="10" Grid.Column="9" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box10X9" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="10" Grid.Column="11" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box10X11" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="10" Grid.Column="12" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box10X12" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="10" Grid.Column="13" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box10X13" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="10" Grid.Column="14" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box10X14" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+
+            <Border Grid.Row="11" Grid.Column="1" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box11X1" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="11" Grid.Column="2" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box11X2" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="11" Grid.Column="4" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box11X4" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="11" Grid.Column="5" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box11X5" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="11" Grid.Column="6" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box11X6" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="11" Grid.Column="8" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box11X8" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="11" Grid.Column="9" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box11X9" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="11" Grid.Column="10" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box11X10" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="11" Grid.Column="12" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box11X12" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="11" Grid.Column="13" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box11X13" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+
+            <Border Grid.Row="12" Grid.Column="0" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box12X0" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="12" Grid.Column="1" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box12X1" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="12" Grid.Column="3" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box12X3" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="12" Grid.Column="4" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box12X4" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="12" Grid.Column="5" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box12X5" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="12" Grid.Column="7" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box12X7" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="12" Grid.Column="9" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box12X9" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="12" Grid.Column="10" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box12X10" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="12" Grid.Column="11" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box12X11" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="12" Grid.Column="13" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box12X13" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="12" Grid.Column="14" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box12X14" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+
+            <Border Grid.Row="13" Grid.Column="0" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box13X0" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="13" Grid.Column="2" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box13X2" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="13" Grid.Column="3" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box13X3" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="13" Grid.Column="4" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box13X4" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="13" Grid.Column="6" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box13X6" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="13" Grid.Column="7" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box13X7" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="13" Grid.Column="8" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box13X8" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="13" Grid.Column="10" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box13X10" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="13" Grid.Column="11" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box13X11" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="13" Grid.Column="12" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box13X12" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="13" Grid.Column="14" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box13X14" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+
+            <Border Grid.Row="14" Grid.Column="1" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box14X1" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="14" Grid.Column="2" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box14X2" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="14" Grid.Column="4" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box14X4" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="14" Grid.Column="5" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box14X5" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="14" Grid.Column="6" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box14X6" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="14" Grid.Column="8" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box14X8" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="14" Grid.Column="9" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box14X9" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="14" Grid.Column="10" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box14X10" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="14" Grid.Column="12" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box14X12" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+            <Border Grid.Row="14" Grid.Column="13" BorderBrush="LightGray" BorderThickness="2">
+                <TextBox x:Name="Box14X13" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+            </Border>
+        </Grid>
+        
+    </Grid>
+</Window>
