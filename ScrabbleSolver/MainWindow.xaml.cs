@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -49,6 +50,14 @@ namespace ScrabbleSolver {
             else if (SetButton.Content.Equals("Solidify")) {
                 SetButton.Content = "Set";
                 YourLettersBox.IsReadOnly = true;
+                
+                // We create a thread to get the anagrams
+                var text = YourLettersBox.Text;
+            
+                var thread = new Thread(() => {
+                    var anagrams = Fill.Anagrams(text);
+                });
+                thread.Start();
 
                 // Send it to uppercase
                 YourLettersBox.Text = YourLettersBox.Text.ToUpper();
