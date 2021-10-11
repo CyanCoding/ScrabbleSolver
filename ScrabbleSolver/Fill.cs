@@ -1,10 +1,62 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace ScrabbleSolver {
     /// <summary>
     /// Works to fill in locations with letters
     /// </summary>
     class Fill {
+        /// <summary>
+        /// Returns a vector with every anagram for a word
+        /// </summary>
+        /// <param name="word">The word to search for</param>
+        /// <returns>A vector with each anagram.</returns>
+        public static List<string> Anagrams(string word) {
+            var totalAnagrams = factorial(word.Length);
+            var anagramsFound = new List<string>();
+
+            var random = new Random();
+
+            for (var i = 0; i < totalAnagrams; i++) {
+                var anagram = "";
+
+                foreach (var t in word) {
+                    var foundCharacter = "";
+                    while (true) {
+                        // TODO: It isn't allowing for duplicate letters
+                        var rnd = random.Next(word.Length - 1);
+                        foundCharacter = word[rnd] + "";
+                        Thread.Sleep(1);
+
+                        if (!anagram.Contains(foundCharacter)) {
+                            // The character wasn't in the string, so success
+                            break;
+                        }
+                    }
+                    anagram += foundCharacter;
+                }
+
+                if (anagramsFound.Contains(anagram)) {
+                    i--;
+                }
+                else {
+                    anagramsFound.Add(anagram);
+                }
+
+            }
+
+            return anagramsFound;
+        }
+
+        private static int factorial(int length) {
+            if (length == 0 || length == 1) {
+                return 1;
+            }
+            else {
+                return length * factorial(length - 1);
+            }
+        }
         public static void FindMatches(string[,] boxesArray, string letters) {
             var unused = FindAllPlaces(boxesArray);
 
