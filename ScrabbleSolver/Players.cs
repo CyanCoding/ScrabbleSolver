@@ -4,6 +4,9 @@ using System.Windows;
 using System.Windows.Controls;
 
 namespace ScrabbleSolver {
+    /// <summary>
+    /// Scoring and players
+    /// </summary>
     internal static class Players {
         public static void AddPlayer(string playerName, int playersAdded) {
             if (Application.Current.Windows.Cast<Window>()

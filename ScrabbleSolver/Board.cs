@@ -2,6 +2,9 @@
 using System.Windows;
 
 namespace ScrabbleSolver {
+    /// <summary>
+    /// Mostly used with board operations, scoring, etc.
+    /// </summary>
     static class Board {
 
         private static List<MainWindow.LocationData> _locationsUsed;

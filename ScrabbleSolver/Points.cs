@@ -1,7 +1,11 @@
 ﻿using System.Collections.Generic;
 
 namespace ScrabbleSolver {
+    /// <summary>
+    /// Points value
+    /// </summary>
     class Points {
+        // TODO: Move point scoring here?
         public readonly Dictionary<string,int> Map = new Dictionary<string, int>();
         public Points() {
             Map.Add("a", 1);
@@ -31,7 +35,5 @@ namespace ScrabbleSolver {
             Map.Add("y", 4);
             Map.Add("z", 10);
         }
-        // TODO: Add a way for the program to check if a letter falls on a special point score
-        // TODO: Make a way for the program to see if a special point score has already been used
     }
 }

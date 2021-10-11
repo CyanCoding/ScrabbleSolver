@@ -1,6 +1,9 @@
 ﻿using System;
 
 namespace ScrabbleSolver {
+    /// <summary>
+    /// Works to fill in locations with letters
+    /// </summary>
     class Fill {
         public static void FindMatches(string[,] boxesArray, string letters) {
             var unused = FindAllPlaces(boxesArray);
