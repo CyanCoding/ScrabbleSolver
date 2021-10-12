@@ -65,18 +65,11 @@ namespace ScrabbleSolver {
                 YourLettersBox.Text = YourLettersBox.Text.ToUpper();
             }
         }
-
-        private void FillButton_Click(object sender, RoutedEventArgs e) {
-            if (PlayersAdded == 0) {
-                AddPlayerDialog();
-
-                return;
-            }
-            // TODO: Figure out the best first move
-
+        
+        private string[,] FillBoard() {
             // An array of TextBox objects from our board
             var boxesArray = new string[15, 15];
-
+            
             // I'm proud of myself for making this
             // Gets children of grid and children of the borders
             // Then sets those children to be readonly or not
@@ -92,7 +85,19 @@ namespace ScrabbleSolver {
                 }
             }
 
+            return boxesArray;
+        }
+
+        private void FillButton_Click(object sender, RoutedEventArgs e) {
+            if (PlayersAdded == 0) {
+                AddPlayerDialog();
+
+                return;
+            }
+            // TODO: Figure out the best first move
+            
             string letters = YourLettersBox.Text;
+            var boxesArray = FillBoard();
             // Do something
             var thread = new Thread(() => {
                 var positions = Fill.FindAllPlaces(boxesArray);
