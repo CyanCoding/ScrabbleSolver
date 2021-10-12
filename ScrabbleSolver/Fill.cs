@@ -69,35 +69,81 @@ namespace ScrabbleSolver {
 
             return foundPlaces;
         }
+        
+        /// <summary>
+        /// Gets every letter combination for a location
+        /// </summary>
+        /// <param name="boxesArray">The board</param>
+        /// <param name="index">The index of the location data to check</param>
+        /// <param name="letters">The letters to fill</param>
+        /// <param name="anagrams">The anagrams list for the letters</param>
+        /// <param name="FoundPlaces">Every found location</param>
+        /// <returns>An array of locations and boards</returns>
+        public static List<MainWindow.NewBoardConfig> FillFromPosition(
+            string[,] boxesArray,
+            int index,
+            string letters,
+            List<string> anagrams,
+            List<MainWindow.LocationData> FoundPlaces) {
+            List<MainWindow.NewBoardConfig> results =
+                new List<MainWindow.NewBoardConfig>();
 
-        private static void FindPosition(string[,] boxesArray,
-            int x,
-            int y,
-            string letters) {
-            var r = new Random();
+            MainWindow.LocationData l = FoundPlaces[index];
 
-            if (boxesArray[y,x] == "") {
-                var value = r.Next(0, letters.Length);
+            MainWindow.LocationData[] upLocations =
+                new MainWindow.LocationData[letters.Length];
 
-                var character = letters[value];
-                letters = letters.Remove(value);
-                boxesArray[y, x] = character + "";
+            int currentY = l.Y;
+            // Finds all the possible up locations and fills them into
+            // upLocations
+            for (int i = 0; i < letters.Length; i++) {
+                if (currentY <= 0) {
+                    break; // TODO: Fix this! Doesn't work if too large a length
+                }
+
+                if (boxesArray[currentY, l.X] != "") {
+                    // There's a letter in this position! Move up
+                    i--;
+                    continue;
+                }
+
+                if (boxesArray[currentY, l.X] == "") {
+                    upLocations[i].X = l.X;
+                    upLocations[i].Y = currentY;
+                }
             }
+            
+            // TODO: We need to go from length 1 to max
+            for (int i = 0; i < anagrams.Count; i++) {
+                for (int j = 0; j < letters.Length; j++) {
+                    boxesArray[upLocations[j].Y, upLocations[j].X] =
+                        anagrams[i][j] + "";
 
-            if (boxesArray[y - 1,x] == "" && letters.Length != 0) {
-                FindPosition(boxesArray, x, y - 1, letters);
-            }
-            if (boxesArray[y + 1, x] == "" && letters.Length != 0) {
-                FindPosition(boxesArray, x, y + 1, letters);
-            }
+                    MainWindow.LocationData newLocation;
+                    newLocation.X = upLocations[j].X;
+                    newLocation.Y = upLocations[j].Y;
+                    newLocation.Letter = anagrams[i][j] + "";
 
-            // Whole word has been used
-            if (letters.Length == 0) {
-                var unused = Points.CalculatePoints(boxesArray,
-                    MainWindow.PreviousBoard);
-                // Add a match that contains the new letter locations
-                //MainWindow.matches.Add()
+                    // TODO: Save the current board state with letters filled get letter locations and pass to config add to results.
+                    MainWindow.NewBoardConfig config;
+
+                    //results.Add(newLocation);
+                    //results[i].NewLocations[j] = newLocation;
+                }
+                
+                // Print out results
+                for (int j = 0; j < 14; j++) {
+                    for (int k = 0; k < 14; k++) {
+                        Console.Write(boxesArray[j, k]);
+                    }
+
+                    Console.WriteLine();
+                }
+                
             }
+            
+            
+            return results;
         }
     }
 }
