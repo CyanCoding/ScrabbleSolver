@@ -30,6 +30,7 @@ namespace ScrabbleSolver {
         public static int PlayersAdded = 0; // Stores amount of players
         public static Players[] GamePlayers = new Players[6];
         public static string[] Order = new string[6];
+        private List<string> Anagrams;
         
 
         public MainWindow() {
@@ -56,7 +57,7 @@ namespace ScrabbleSolver {
                 var text = YourLettersBox.Text;
             
                 var thread = new Thread(() => {
-                    var anagrams = Anagram.GetAnagrams(text);
+                    Anagrams = Anagram.GetAnagrams(text);
                 });
                 thread.Start();
 
