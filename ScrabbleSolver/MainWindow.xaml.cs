@@ -17,6 +17,7 @@ namespace ScrabbleSolver {
         public struct LocationData {
             public int X;
             public int Y;
+            public string Letter;
         }
 
         public struct NewBoardConfig {
