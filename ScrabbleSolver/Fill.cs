@@ -7,40 +7,59 @@ namespace ScrabbleSolver {
     /// Works to fill in locations with letters
     /// </summary>
     class Fill {
-        public static void FindMatches(string[,] boxesArray, string letters) {
-            var unused = FindAllPlaces(boxesArray);
-
-            for (var i = 0; i < boxesArray.GetLength(0); i++) {
-                for (var j = 0; j < boxesArray.GetLength(1); j++) {
-                    if (boxesArray[i, j] != "") {
-                        //FindPosition(boxesArray, i, j, letters);
-
-                    }
-                }
-            }
-        }
-
-        private static int FindAllPlaces(string[,] boxesArray) {
+        
+        /// <summary>
+        /// Gets every possible location for playing on the board
+        /// </summary>
+        /// <param name="boxesArray">The board</param>
+        /// <returns>Location data for each position</returns>
+        public static List<MainWindow.LocationData> FindAllPlaces(string[,] boxesArray) {
+            List<MainWindow.LocationData> foundPlaces = new List<MainWindow.LocationData>();
+            foundPlaces.Clear();
+            
             var possibleSpots = 0;
 
             for (var i = 0; i < boxesArray.GetLength(0); i++) {
                 for (var j = 0; j < boxesArray.GetLength(1); j++) {
+                    MainWindow.LocationData l =
+                        new MainWindow.LocationData();
+
                     // For each available position, count and then set that
                     // position to a number so we don't count that position again
                     if (boxesArray[i, j] != "" && boxesArray[i, j] != "1") {
                         if (i > 0 && boxesArray[i - 1, j] == "") {
+                            l.Y = i - 1;
+                            l.X = j;
+                            foundPlaces.Add(l);
+
                             possibleSpots++;
                             boxesArray[i - 1, j] = "1";
+
                         }
+
                         if (i < 14 && boxesArray[i + 1, j] == "") {
+                            l.Y = i + 1;
+                            l.X = j;
+                            foundPlaces.Add(l);
+
                             possibleSpots++;
                             boxesArray[i + 1, j] = "1";
                         }
+
                         if (j > 0 && boxesArray[i, j - 1] == "") {
+                            l.Y = i;
+                            l.X = j - 1;
+                            foundPlaces.Add(l);
+
                             possibleSpots++;
                             boxesArray[i, j - 1] = "1";
                         }
+
                         if (j < 14 && boxesArray[i, j + 1] == "") {
+                            l.Y = i;
+                            l.X = j + 1;
+                            foundPlaces.Add(l);
+
                             possibleSpots++;
                             boxesArray[i, j + 1] = "1";
                         }
