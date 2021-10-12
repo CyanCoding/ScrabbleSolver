@@ -55,7 +55,7 @@ namespace ScrabbleSolver {
                 var text = YourLettersBox.Text;
             
                 var thread = new Thread(() => {
-                    var anagrams = Fill.Anagrams(text);
+                    var anagrams = Anagram.GetAnagrams(text);
                 });
                 thread.Start();
 

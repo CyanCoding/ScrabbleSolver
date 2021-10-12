@@ -58,6 +58,7 @@
         <Compile Include="AddPlayerWindow.xaml.cs">
           <DependentUpon>AddPlayerWindow.xaml</DependentUpon>
         </Compile>
+        <Compile Include="Anagram.cs" />
         <Compile Include="App.xaml.cs">
             <DependentUpon>App.xaml</DependentUpon>
             <SubType>Code</SubType>
