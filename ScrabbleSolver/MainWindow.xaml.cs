@@ -174,7 +174,7 @@ namespace ScrabbleSolver {
                 }
             }
 
-            var value = Board.CalculatePoints(boxesArray, PreviousBoard);
+            var value = Points.CalculatePoints(boxesArray, PreviousBoard);
 
             for (var i = 0; i < GamePlayers.Length; i++) {
                 if (Order[_turnNumber] == GamePlayers[i].Name) {

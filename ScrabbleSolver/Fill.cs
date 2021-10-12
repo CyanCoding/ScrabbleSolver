@@ -73,7 +73,7 @@ namespace ScrabbleSolver {
 
             // Whole word has been used
             if (letters.Length == 0) {
-                var unused = Board.CalculatePoints(boxesArray,
+                var unused = Points.CalculatePoints(boxesArray,
                     MainWindow.PreviousBoard);
                 // Add a match that contains the new letter locations
                 //MainWindow.matches.Add()
