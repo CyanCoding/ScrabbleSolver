@@ -92,7 +92,22 @@ namespace ScrabbleSolver {
                 }
             }
 
-            Fill.FindMatches(boxesArray, YourLettersBox.Text);
+            string letters = YourLettersBox.Text;
+            // Do something
+            var thread = new Thread(() => {
+                var positions = Fill.FindAllPlaces(boxesArray);
+            
+                // Check if Anagrams has been filled or not
+                if (Anagrams == null) {
+                    Anagrams = Anagram.GetAnagrams(letters);
+                }
+
+                Fill.FillFromPosition(boxesArray, 0, letters, Anagrams,
+                    positions);
+
+            });
+            thread.Start();
+            //Fill.FindMatches(boxesArray, YourLettersBox.Text);
 
         }
         private void ShuffleButton_Click(object sender, RoutedEventArgs e) {
