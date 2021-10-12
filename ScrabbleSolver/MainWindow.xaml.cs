@@ -19,10 +19,10 @@ namespace ScrabbleSolver {
             public int Y;
         }
 
-        //public struct matches {
-        //    public List<LocationData> locations;
-        //    public int points;
-        //}
+        public struct NewBoardConfig {
+            public string[,] Board;
+            public List<LocationData> NewLocations;
+        }
 
         public static List<LocationData> Matches;
 
