@@ -66,7 +66,8 @@ namespace ScrabbleSolver {
                     }
                 }
             }
-            return possibleSpots;
+
+            return foundPlaces;
         }
 
         private static void FindPosition(string[,] boxesArray,
