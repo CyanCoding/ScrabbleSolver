@@ -134,7 +134,37 @@ namespace ScrabbleSolver {
                 new MainWindow.LocationData[letters.Length];
             
             // TODO: We need to go from length 1 to max
-            foreach (var anagram in anagrams) {
+            for (int i = 0; i < letters.Length; i++) {
+                // For each anagram at each length
+                foreach (string anagram in anagrams) {
+                    // For each letter of each anagram
+                    for (int j = 0; j <= i; j++) {
+                        int y = upSpots[j].Y;
+                        int x = upSpots[j].X;
+                        string l = anagram[j] + "";
+
+                        copyBox[y, x] = l;
+                        
+                        MainWindow.LocationData newLocation;
+                        newLocation.Y = y;
+                        newLocation.X = x;
+                        newLocation.Letter = l;
+
+                        filledLocations[j] = newLocation;
+                        
+                        // Add the new board configuration to results
+                        MainWindow.NewBoardConfig config;
+                        config.NewLocations = filledLocations.ToList();
+                        config.Board = copyBox;
+                        
+                        // TODO: This isn't working right! We need another way to check if that value has been added
+                        if (!results.Contains(config)) {
+                            results.Add(config);
+                        }
+                    }
+                }
+            }
+            /*foreach (var anagram in anagrams) {
                 for (int j = 0; j < letters.Length; j++) {
                     int y = upSpots[j].Y;
                     int x = upSpots[j].X;
@@ -156,7 +186,7 @@ namespace ScrabbleSolver {
                 config.Board = copyBox;
 
                 results.Add(config);
-            }
+            }*/
             
             
             return results;
