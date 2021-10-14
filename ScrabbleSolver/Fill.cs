@@ -163,38 +163,23 @@ namespace ScrabbleSolver {
                     MainWindow.NewBoardConfig config;
                     config.NewLocations = filledLocations.ToList();
                     config.Board = copyBox;
-                    
-                    if (!anagramsFound.Contains(creatingWord)) {
+
+                    bool addedTo = false;
+
+                    foreach (var result in results) {
+                        var locations = result.NewLocations;
+                        if (locations.SequenceEqual(config.NewLocations)) {
+                            addedTo = true;
+                        }
+                    }
+
+                    if (!addedTo) {
                         results.Add(config);
-                        anagramsFound.Add(creatingWord);
                     }
                 }
             }
-            /*foreach (var anagram in anagrams) {
-                for (int j = 0; j < letters.Length; j++) {
-                    int y = upSpots[j].Y;
-                    int x = upSpots[j].X;
-                    string l = anagram[j] + "";
 
-                    copyBox[y, x] = l;
 
-                    MainWindow.LocationData newLocation;
-                    newLocation.Y = y;
-                    newLocation.X = x;
-                    newLocation.Letter = l;
-
-                    filledLocations[j] = newLocation;
-                }
-                
-                // Add the new board configuration to results
-                MainWindow.NewBoardConfig config;
-                config.NewLocations = filledLocations.ToList();
-                config.Board = copyBox;
-
-                results.Add(config);
-            }*/
-            
-            
             return results;
         }
     }
