@@ -19,9 +19,6 @@ namespace ScrabbleSolver {
             List<MainWindow.LocationData> foundPlaces =
                 new List<MainWindow.LocationData>();
             foundPlaces.Clear();
-            
-            // For cloning arrays:
-            //string[,] originalBoard = (string[,]) boxesArray.Clone();
 
 
             for (var i = 0; i < boxesArray.GetLength(0); i++) {
@@ -129,9 +126,8 @@ namespace ScrabbleSolver {
                 currentY--;
             }
             
-            // The previous boxesArray before it was modified
-            // TODO: We have an issue where changing boxesArray in another function is causing this to change
-            var defaultBox = boxesArray;
+            // Clones the array
+            string[,] copyBox = (string[,]) boxesArray.Clone();
             
             // A list of each position and letter used for a certain combination
             MainWindow.LocationData[] filledLocations =
@@ -140,7 +136,7 @@ namespace ScrabbleSolver {
             // TODO: We need to go from length 1 to max
             foreach (var anagram in anagrams) {
                 for (int j = 0; j < letters.Length; j++) {
-                    boxesArray[upSpots[j].Y, upSpots[j].X] =
+                    copyBox[upSpots[j].Y, upSpots[j].X] =
                         anagram[j] + "";
 
                     MainWindow.LocationData newLocation;
@@ -155,21 +151,9 @@ namespace ScrabbleSolver {
                 // Add the new board configuration to results
                 MainWindow.NewBoardConfig config;
                 config.NewLocations = filledLocations.ToList();
-                config.Board = boxesArray;
+                config.Board = copyBox;
 
                 results.Add(config);
-                
-                // Reset the board
-                boxesArray = defaultBox;
-                
-                // Print out results
-                for (int j = 0; j < 14; j++) {
-                    for (int k = 0; k < 14; k++) {
-                        Console.Write(boxesArray[j, k]);
-                    }
-
-                    Console.WriteLine();
-                }
             }
             
             
