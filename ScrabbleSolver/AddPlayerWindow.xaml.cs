@@ -8,6 +8,7 @@ namespace ScrabbleSolver {
     public partial class AddPlayerWindow {
         public AddPlayerWindow() {
             InitializeComponent();
+            PlayerNameBox.Focus();
         }
 
 
