@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Input;
 
 namespace ScrabbleSolver {
     /// <summary>
@@ -33,6 +34,12 @@ namespace ScrabbleSolver {
         /// </summary>
         private void Button_Click_1(object sender, RoutedEventArgs e) {
             Close();
+        }
+
+        private void AddPlayerWindow_OnPreviewKeyDown(object sender, KeyEventArgs e) {
+            if (e.Key == Key.Enter) {
+                Button_Click(sender, e);
+            }
         }
     }
 }

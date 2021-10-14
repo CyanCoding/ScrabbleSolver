@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="Add new player" Height="130" Width="330" WindowStyle="None" WindowStartupLocation="CenterScreen" Background="DarkGray">
+        Title="Add new player" Height="130" Width="330" WindowStyle="None" WindowStartupLocation="CenterScreen" Background="DarkGray" PreviewKeyDown="AddPlayerWindow_OnPreviewKeyDown">
     <Grid>
         <TextBox x:Name="PlayerNameBox" Margin="10,10,10,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" FontSize="26"/>
         <Button Content="Add" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Click="Button_Click" FontSize="22" Width="81"/>
