@@ -136,16 +136,18 @@ namespace ScrabbleSolver {
             // TODO: We need to go from length 1 to max
             foreach (var anagram in anagrams) {
                 for (int j = 0; j < letters.Length; j++) {
-                    copyBox[upSpots[j].Y, upSpots[j].X] =
-                        anagram[j] + "";
+                    int y = upSpots[j].Y;
+                    int x = upSpots[j].X;
+                    string l = anagram[j] + "";
+
+                    copyBox[y, x] = l;
 
                     MainWindow.LocationData newLocation;
-                    newLocation.X = upSpots[j].X;
-                    newLocation.Y = upSpots[j].Y;
-                    newLocation.Letter = anagram[j] + "";
+                    newLocation.Y = y;
+                    newLocation.X = x;
+                    newLocation.Letter = l;
 
                     filledLocations[j] = newLocation;
-                    // TODO: Save the current board state with letters filled get letter locations and pass to config add to results.
                 }
                 
                 // Add the new board configuration to results
