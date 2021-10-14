@@ -125,6 +125,8 @@ namespace ScrabbleSolver {
                     upSpots[i].X = testSpot.X;
                     upSpots[i].Y = currentY;
                 }
+
+                currentY--;
             }
             
             // The previous boxesArray before it was modified
