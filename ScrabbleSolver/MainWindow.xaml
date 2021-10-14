@@ -20,8 +20,13 @@
                 <MenuItem Header="Override player turn"/>
                 <MenuItem Header="Override board"/>
                 <MenuItem Header="Add player" Click="AddPlayerMenuItemClick"/>
+                <MenuItem x:Name="DebugModeItem" Header="Debug mode" IsCheckable="True" Click="DebugModeItem_OnClick"/>
             </MenuItem>
         </Menu>
+        
+        <Button x:Name="FirstDebugButton" Margin="20,100,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Height="20" Width="100" Content="Last result" Visibility="Hidden"/>
+        <Button x:Name="NextDebugButton" Margin="140,100,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Height="20" Width="100" Content="Next result" Visibility="Hidden" Click="NextDebugButtonSelected"/>
+        <TextBlock x:Name="FirstDebugLabel" Margin="260,100,0,0" Text="No results yet..." HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Hidden"/>
         
         <!-- Greeting -->
         <TextBlock HorizontalAlignment="Left" Margin="10,27,0,0" TextWrapping="Wrap" Text="ScrabbleSolver" VerticalAlignment="Top" FontSize="24"/>

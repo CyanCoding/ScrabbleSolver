@@ -208,5 +208,57 @@ namespace ScrabbleSolver {
 
             PreviousBoard = boxesArray;
         }
+        private void DebugModeItem_OnClick(object sender, RoutedEventArgs e) {
+            if (DebugModeItem.IsChecked) {
+                FirstDebugButton.Visibility = Visibility.Visible;
+                NextDebugButton.Visibility = Visibility.Visible;
+                FirstDebugLabel.Visibility = Visibility.Visible;
+            }
+            else {
+                FirstDebugButton.Visibility = Visibility.Hidden;
+                NextDebugButton.Visibility = Visibility.Hidden;
+                FirstDebugLabel.Visibility = Visibility.Hidden;
+            }
+        }
+
+        private void SetBoard(string[,] boxesArray) {
+            foreach (var b in BoardGrid.Children) {
+                if (b is Border border) {
+                    Object t = border.Child;
+                    if (!(t is TextBox box)) continue;
+                    
+                    var y = (int)border.GetValue(Grid.RowProperty);
+                    var x = (int)border.GetValue(Grid.ColumnProperty);
+                    box.Text = boxesArray[y, x];
+                }
+            }
+        }
+
+        private int viewing = 0;
+        private List<NewBoardConfig> results;
+        private void NextDebugButtonSelected(object sender, RoutedEventArgs e) {
+            // Create results if it's the first run
+            if (viewing == 0) {
+                string letters = YourLettersBox.Text;
+                var boxesArray = FillBoard();
+            
+                var positions = Fill.FindAllPlaces(boxesArray);
+            
+                // Check if Anagrams has been filled or not
+                if (Anagrams == null) {
+                    Anagrams = Anagram.GetAnagrams(letters);
+                }
+
+                results = Fill.FillFromPosition(boxesArray, 0, letters, Anagrams,
+                    positions);
+            }
+            else {
+                NewBoardConfig config = results[viewing - 1];
+                SetBoard(config.Board);
+            }
+
+            FirstDebugLabel.Text = "Viewing " + viewing + "/" + results.Count;
+            viewing++;
+        }
     }
 }
