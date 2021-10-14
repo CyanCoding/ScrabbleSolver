@@ -133,10 +133,15 @@ namespace ScrabbleSolver {
             MainWindow.LocationData[] filledLocations =
                 new MainWindow.LocationData[letters.Length];
             
+            // This contains each anagram, so we can check if one has already
+            // be found
+            List<string> anagramsFound = new List<string>();
             // TODO: We need to go from length 1 to max
             for (int i = 0; i < letters.Length; i++) {
                 // For each anagram at each length
                 foreach (string anagram in anagrams) {
+                    // We add letters to this as we progress
+                    string creatingWord = "";
                     // For each letter of each anagram
                     for (int j = 0; j <= i; j++) {
                         int y = upSpots[j].Y;
@@ -151,16 +156,17 @@ namespace ScrabbleSolver {
                         newLocation.Letter = l;
 
                         filledLocations[j] = newLocation;
-                        
-                        // Add the new board configuration to results
-                        MainWindow.NewBoardConfig config;
-                        config.NewLocations = filledLocations.ToList();
-                        config.Board = copyBox;
-                        
-                        // TODO: This isn't working right! We need another way to check if that value has been added
-                        if (!results.Contains(config)) {
-                            results.Add(config);
-                        }
+
+                        creatingWord += l;
+                    }
+                    // Add the new board configuration to results
+                    MainWindow.NewBoardConfig config;
+                    config.NewLocations = filledLocations.ToList();
+                    config.Board = copyBox;
+                    
+                    if (!anagramsFound.Contains(creatingWord)) {
+                        results.Add(config);
+                        anagramsFound.Add(creatingWord);
                     }
                 }
             }
