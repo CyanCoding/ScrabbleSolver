@@ -9,6 +9,8 @@ namespace ScrabbleSolver {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
+
+    #region Structs
     public partial class MainWindow {
         public struct Players {
             public string Name;
@@ -24,14 +26,14 @@ namespace ScrabbleSolver {
             public string[,] Board;
             public List<LocationData> NewLocations;
         }
+        #endregion
 
         public static List<LocationData> Matches;
 
         public static int PlayersAdded = 0; // Stores amount of players
         public static Players[] GamePlayers = new Players[6];
         public static string[] Order = new string[6];
-        private List<string> Anagrams;
-        
+        private List<string> _anagrams;
 
         public MainWindow() {
             InitializeComponent();
@@ -57,7 +59,9 @@ namespace ScrabbleSolver {
                 var text = YourLettersBox.Text;
             
                 var thread = new Thread(() => {
-                    Anagrams = Anagram.GetAnagrams(text);
+                    Dispatcher.Invoke(() => {
+                        _anagrams = Anagram.GetAnagrams(text);
+                    });
                 });
                 thread.Start();
 
@@ -103,11 +107,11 @@ namespace ScrabbleSolver {
                 var positions = Fill.FindAllPlaces(boxesArray);
             
                 // Check if Anagrams has been filled or not
-                if (Anagrams == null) {
-                    Anagrams = Anagram.GetAnagrams(letters);
+                if (_anagrams == null) {
+                    _anagrams = Anagram.GetAnagrams(letters);
                 }
 
-                Fill.FillFromPosition(boxesArray, 0, letters, Anagrams,
+                Fill.FillFromPosition(boxesArray, 0, letters, _anagrams,
                     positions);
 
             });
@@ -234,31 +238,45 @@ namespace ScrabbleSolver {
             }
         }
 
-        private int viewing = 0;
-        private List<NewBoardConfig> results;
+        private int _viewing;
+        private List<NewBoardConfig> _results;
         private void NextDebugButtonSelected(object sender, RoutedEventArgs e) {
             // Create results if it's the first run
-            if (viewing == 0) {
-                string letters = YourLettersBox.Text;
-                var boxesArray = FillBoard();
-            
-                var positions = Fill.FindAllPlaces(boxesArray);
-            
-                // Check if Anagrams has been filled or not
-                if (Anagrams == null) {
-                    Anagrams = Anagram.GetAnagrams(letters);
-                }
+            if (_viewing == 0) {
+                var thread = new Thread(() => {
+                    Dispatcher.Invoke(() => {
+                        string letters = YourLettersBox.Text;
+                        var boxesArray = FillBoard();
 
-                results = Fill.FillFromPosition(boxesArray, 0, letters, Anagrams,
-                    positions);
+                        var positions = Fill.FindAllPlaces(boxesArray);
+
+                        // Check if Anagrams has been filled or not
+                        if (_anagrams == null) {
+                            _anagrams = Anagram.GetAnagrams(letters);
+                        }
+
+                        _results = Fill.FillFromPosition(boxesArray, 0, letters,
+                            _anagrams,
+                            positions);
+                        
+                        FirstDebugLabel.Text = "Viewing " + _viewing + "/" + _results.Count;
+                        _viewing++;
+                    });
+                });
+                thread.Start();
             }
             else {
-                NewBoardConfig config = results[viewing - 1];
+                NewBoardConfig config = _results[_viewing - 1];
                 SetBoard(config.Board);
+                
+                FirstDebugLabel.Text = "Viewing " + _viewing + "/" + _results.Count;
+                _viewing++;
             }
+        }
 
-            FirstDebugLabel.Text = "Viewing " + viewing + "/" + results.Count;
-            viewing++;
+        private void FirstDebugButton_OnClick(object sender, RoutedEventArgs e) {
+            _viewing = 0;
+            
         }
     }
 }
