@@ -163,6 +163,7 @@ namespace ScrabbleSolver {
                     MainWindow.NewBoardConfig config;
                     config.NewLocations = filledLocations.ToList();
                     config.Board = copyBox;
+                    copyBox = (string[,]) boxesArray.Clone();
 
                     bool addedTo = false;
 
