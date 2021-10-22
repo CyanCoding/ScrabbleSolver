@@ -254,7 +254,8 @@ namespace ScrabbleSolver {
                         if (_anagrams == null) {
                             _anagrams = Anagram.GetAnagrams(letters);
                         }
-
+                        
+                        // Gets our array of boards and locations
                         _results = Fill.FillFromPosition(boxesArray, 0, letters,
                             _anagrams,
                             positions);
@@ -277,6 +278,32 @@ namespace ScrabbleSolver {
         private void FirstDebugButton_OnClick(object sender, RoutedEventArgs e) {
             _viewing = 0;
             
+        }
+
+        private void OverrideBoardClick(object sender, RoutedEventArgs e) {
+            bool isEditing = false;
+            // We allow the user to edit the board without changing scoring
+            foreach (var b in BoardGrid.Children) {
+                if (b is Border border) {
+                    Object t = border.Child;
+                    
+                    if (!(t is TextBox box)) continue;
+                    
+                    box.IsReadOnly = !box.IsReadOnly;
+                    if (box.IsReadOnly == true) {
+                        isEditing = true;
+                    }
+                }
+            }
+
+            if (isEditing) {
+                var messageBoxText = "The board has been saved!";
+                var caption = "ScrabbleSolver";
+                var button = MessageBoxButton.OK;
+                var icon = MessageBoxImage.Information;
+
+                MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
+            }
         }
     }
 }

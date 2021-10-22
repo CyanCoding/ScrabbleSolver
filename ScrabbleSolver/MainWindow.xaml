@@ -18,7 +18,7 @@
                 <MenuItem Header="Clear letters"/>
                 <MenuItem Header="Override scoring"/>
                 <MenuItem Header="Override player turn"/>
-                <MenuItem Header="Override board"/>
+                <MenuItem Header="Override board" Click="OverrideBoardClick"/>
                 <MenuItem Header="Add player" Click="AddPlayerMenuItemClick"/>
                 <MenuItem x:Name="DebugModeItem" Header="Debug mode" IsCheckable="True" Click="DebugModeItem_OnClick"/>
             </MenuItem>
