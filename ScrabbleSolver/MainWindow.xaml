@@ -24,7 +24,7 @@
             </MenuItem>
         </Menu>
         
-        <Button x:Name="FirstDebugButton" Margin="20,100,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Height="20" Width="100" Content="Reset" Click="FirstDebugButton_OnClick" Visibility="Hidden"/>
+        <Button x:Name="FirstDebugButton" Margin="20,100,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Height="20" Width="100" Content="+25" Click="FirstDebugButton_OnClick" Visibility="Hidden"/>
         <Button x:Name="NextDebugButton" Margin="140,100,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Height="20" Width="100" Content="Next result" Visibility="Hidden" Click="NextDebugButtonSelected"/>
         <TextBlock x:Name="FirstDebugLabel" Margin="260,100,0,0" Text="No results yet..." HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Hidden"/>
         

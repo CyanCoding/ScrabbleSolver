@@ -276,8 +276,11 @@ namespace ScrabbleSolver {
         }
 
         private void FirstDebugButton_OnClick(object sender, RoutedEventArgs e) {
-            _viewing = 0;
-            
+            NewBoardConfig config = _results[_viewing - 1];
+            SetBoard(config.Board);
+                
+            FirstDebugLabel.Text = "Viewing " + _viewing + "/" + _results.Count;
+            _viewing += 25;
         }
 
         private void OverrideBoardClick(object sender, RoutedEventArgs e) {
