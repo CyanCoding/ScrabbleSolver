@@ -243,6 +243,7 @@ namespace ScrabbleSolver {
         private void NextDebugButtonSelected(object sender, RoutedEventArgs e) {
             // Create results if it's the first run
             if (_viewing == 0) {
+                _results = new List<NewBoardConfig>();
                 var thread = new Thread(() => {
                     Dispatcher.Invoke(() => {
                         string letters = YourLettersBox.Text;
@@ -256,9 +257,15 @@ namespace ScrabbleSolver {
                         }
                         
                         // Gets our array of boards and locations
-                        _results = Fill.FillFromPosition(boxesArray, 0, letters,
-                            _anagrams,
-                            positions);
+                        for (int i = 0; i < positions.Count; i++) {
+                            var newResults = Fill.FillFromPosition(boxesArray, i, letters,
+                                _anagrams, positions);
+
+                            foreach (var result in newResults) {
+                                _results.Add(result);
+                            }
+                        }
+
                         
                         FirstDebugLabel.Text = "Viewing " + _viewing + "/" + _results.Count;
                         _viewing++;
