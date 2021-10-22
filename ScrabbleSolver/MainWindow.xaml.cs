@@ -211,7 +211,7 @@ namespace ScrabbleSolver {
 
             ScrabbleSolver.Players.UpdateScores(GamePlayers);
 
-            PreviousBoard = boxesArray;
+            PreviousBoard = (string[,]) boxesArray.Clone();
         }
         private void DebugModeItem_OnClick(object sender, RoutedEventArgs e) {
             if (DebugModeItem.IsChecked) {
