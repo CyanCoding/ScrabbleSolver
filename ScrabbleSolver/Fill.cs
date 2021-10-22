@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Windows.Documents;
 using System.Windows.Media.Animation;
 
 namespace ScrabbleSolver {
@@ -77,6 +78,55 @@ namespace ScrabbleSolver {
             return foundPlaces;
         }
         
+        
+        public static List<List<MainWindow.LocationData>> FindLetterPositions(
+            MainWindow.LocationData testSpot,
+            string letters,
+            string[,] boxesArray) {
+            List<List<MainWindow.LocationData>> lists =
+                new List<List<MainWindow.LocationData>>();
+            
+            // Finds the vertical positions
+            for (int i = 0; i < /*letters.Length*/ 1; i++) {
+                List<MainWindow.LocationData> newList =
+                    new List<MainWindow.LocationData>();
+                
+                int currentY = testSpot.Y;
+                for (int j = 0; j < letters.Length; j++) {
+                    if (currentY < 0) {
+                        // The idea is if we hit y = 0 or smaller, we need
+                        // to end the array of locations
+                        break;
+                    }
+                    
+                    // If there's a letter here or we're too high
+                    if (boxesArray[currentY, testSpot.X] != "" || currentY > 14) {
+                        // There's a letter in this position! Move up
+                        j--;
+                        currentY--;
+                        continue;
+                    }
+
+                    if (boxesArray[currentY, testSpot.X] == "") {
+                        MainWindow.LocationData location =
+                            new MainWindow.LocationData();
+                        location.X = testSpot.X;
+                        location.Y = currentY;
+                        
+                        newList.Add(location);
+                    }
+
+                    currentY--;
+                }
+                // Adds our combination list to the main list
+                lists.Add(newList);
+                
+                currentY = testSpot.Y + 1;
+            }
+
+            return lists;
+        }
+
         /// <summary>
         /// Gets every letter combination for a location
         /// </summary>
@@ -99,87 +149,66 @@ namespace ScrabbleSolver {
             
             // The location we are testing
             MainWindow.LocationData testSpot = foundPlaces[index];
-            
-            // Each of the positions we can go up
-            MainWindow.LocationData[] upSpots =
-                new MainWindow.LocationData[letters.Length];
 
-            int currentY = testSpot.Y;
-            // Finds all the possible up locations and fills them into
-            // upLocations
-            for (int i = 0; i < letters.Length; i++) {
-                if (currentY <= 0) {
-                    break; // TODO: Fix this! Doesn't work if too large a length
-                }
-
-                if (boxesArray[currentY, testSpot.X] != "") {
-                    // There's a letter in this position! Move up
-                    i--;
-                    continue;
-                }
-
-                if (boxesArray[currentY, testSpot.X] == "") {
-                    upSpots[i].X = testSpot.X;
-                    upSpots[i].Y = currentY;
-                }
-
-                currentY--;
-            }
-            
             // Clones the array
             string[,] copyBox = (string[,]) boxesArray.Clone();
             
             // A list of each position and letter used for a certain combination
             MainWindow.LocationData[] filledLocations =
                 new MainWindow.LocationData[letters.Length];
+
+            var everyPos = FindLetterPositions(testSpot, letters, boxesArray);
             
             // This contains each anagram, so we can check if one has already
             // be found
             List<string> anagramsFound = new List<string>();
-            // TODO: We need to go from length 1 to max
-            for (int i = 0; i < letters.Length; i++) {
-                // For each anagram at each length
-                foreach (string anagram in anagrams) {
-                    // We add letters to this as we progress
-                    string creatingWord = "";
-                    // For each letter of each anagram
-                    for (int j = 0; j <= i; j++) {
-                        int y = upSpots[j].Y;
-                        int x = upSpots[j].X;
-                        string l = anagram[j] + "";
 
-                        copyBox[y, x] = l;
+            foreach (List<MainWindow.LocationData> dataList in everyPos) {
+                for (int i = 0; i < letters.Length; i++) {
+                    // For each anagram at each length
+                    foreach (string anagram in anagrams) {
+                        // We add letters to this as we progress
+                        // For each letter of each anagram
+                        for (int j = 0; j <= i; j++) {
+                            // Avoid argument out of bounds exceptions
+                            if (i >= dataList.Count) {
+                                break;
+                            }
+                            
+                            int y = dataList[j].Y;
+                            int x = dataList[j].X;
+                            string l = anagram[j] + "";
+
+                            copyBox[y, x] = l;
                         
-                        MainWindow.LocationData newLocation;
-                        newLocation.Y = y;
-                        newLocation.X = x;
-                        newLocation.Letter = l;
+                            MainWindow.LocationData newLocation;
+                            newLocation.Y = y;
+                            newLocation.X = x;
+                            newLocation.Letter = l;
 
-                        filledLocations[j] = newLocation;
+                            filledLocations[j] = newLocation;
+                        }
+                        // Add the new board configuration to results
+                        MainWindow.NewBoardConfig config;
+                        config.NewLocations = filledLocations.ToList();
+                        config.Board = copyBox;
+                        copyBox = (string[,]) boxesArray.Clone();
 
-                        creatingWord += l;
-                    }
-                    // Add the new board configuration to results
-                    MainWindow.NewBoardConfig config;
-                    config.NewLocations = filledLocations.ToList();
-                    config.Board = copyBox;
-                    copyBox = (string[,]) boxesArray.Clone();
+                        bool addedTo = false;
 
-                    bool addedTo = false;
+                        foreach (var result in results) {
+                            var locations = result.NewLocations;
+                            if (locations.SequenceEqual(config.NewLocations)) {
+                                addedTo = true;
+                            }
+                        }
 
-                    foreach (var result in results) {
-                        var locations = result.NewLocations;
-                        if (locations.SequenceEqual(config.NewLocations)) {
-                            addedTo = true;
+                        if (!addedTo) {
+                            results.Add(config);
                         }
                     }
-
-                    if (!addedTo) {
-                        results.Add(config);
-                    }
-                }
+                }   
             }
-
 
             return results;
         }
