@@ -194,6 +194,7 @@ namespace ScrabbleSolver {
                     if (!(t is TextBox box)) continue;
                     
                     box.IsReadOnly = _isReadOnly;
+                    box.Text = box.Text.ToUpper();
                     var y = (int)border.GetValue(Grid.RowProperty);
                     var x = (int)border.GetValue(Grid.ColumnProperty);
                     boxesArray[y, x] = box.Text;
@@ -300,6 +301,7 @@ namespace ScrabbleSolver {
                     if (!(t is TextBox box)) continue;
                     
                     box.IsReadOnly = !box.IsReadOnly;
+                    box.Text = box.Text.ToUpper();
                     if (box.IsReadOnly == true) {
                         isEditing = true;
                     }

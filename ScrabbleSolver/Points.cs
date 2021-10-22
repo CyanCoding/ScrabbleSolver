@@ -74,13 +74,13 @@ namespace ScrabbleSolver {
                     var x = l.X;
                     var y = l.Y;
 
-                    adjacentLetters += boxesArray[y, x];
+                    adjacentLetters += boxesArray[y, x].ToLower();
 
                     if (boxesArray[y,x] == "") {
                         continue;
                     }
 
-                    var value = points.Map[boxesArray[y, x]];
+                    var value = points.Map[boxesArray[y, x].ToLower()];
                     value = PointsValue(value, l);
 
                     totalPoints += value;
