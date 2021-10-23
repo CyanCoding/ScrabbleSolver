@@ -46,7 +46,12 @@ namespace ScrabbleSolver {
                     g.Children.Add(playerScore);
                 }
                 else {
-                    throw new Exception("Too many players! Max is 6.");
+                    var messageBoxText = "Too many players! Max is 6.";
+                    var caption = "ScrabbleSolver";
+                    var button = MessageBoxButton.OK;
+                    var icon = MessageBoxImage.Error;
+
+                    MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
                 }
             }
         }
