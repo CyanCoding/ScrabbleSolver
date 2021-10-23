@@ -56,7 +56,7 @@ namespace ScrabbleSolver {
             }
         }
 
-        public static void UpdateScores(MainWindow.Players[] players) {
+        public static void UpdateScores(MainWindow.PlayerData[] players) {
             if (Application.Current.Windows.Cast<Window>()
                 .FirstOrDefault(window => window is MainWindow) is MainWindow
                 mainWin) {

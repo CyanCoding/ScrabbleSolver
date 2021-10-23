@@ -14,7 +14,7 @@ namespace ScrabbleSolver {
 
     #region Structs
     public partial class MainWindow {
-        public struct Players {
+        public struct PlayerData {
             public string Name;
             public int Points;
         }
@@ -33,7 +33,7 @@ namespace ScrabbleSolver {
         public static List<LocationData> Matches;
 
         public static int PlayersAdded = 0; // Stores amount of players
-        public static Players[] GamePlayers = new Players[6];
+        public static PlayerData[] GamePlayers = new PlayerData[6];
         public static string[] Order = new string[6];
         private List<List<string>> _anagrams;
 
@@ -457,7 +457,7 @@ namespace ScrabbleSolver {
             YourLettersBox.Text = save.Letters.ToUpper();
 
             for (int i = 0; i < 6; i++) {
-                var player = new Players();
+                var player = new PlayerData();
                 var subList = save.Players[i];
                 player.Name = subList[0];
                 player.Points = Int32.Parse(subList[1]);

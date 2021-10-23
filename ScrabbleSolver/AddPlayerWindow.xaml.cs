@@ -18,7 +18,7 @@ namespace ScrabbleSolver {
         private void Button_Click(object sender, RoutedEventArgs e) {
             Players.AddPlayer(PlayerNameBox.Text, MainWindow.PlayersAdded);
 
-            var newPlayer = new MainWindow.Players {
+            var newPlayer = new MainWindow.PlayerData {
                 Name = PlayerNameBox.Text,
                 Points = 0
             };
