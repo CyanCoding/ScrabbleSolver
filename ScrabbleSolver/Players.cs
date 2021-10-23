@@ -8,6 +8,12 @@ namespace ScrabbleSolver {
     /// Scoring and players
     /// </summary>
     internal static class Players {
+        /// <summary>
+        /// Adds a player to the scoring grid
+        /// </summary>
+        /// <param name="playerName">The name of the player</param>
+        /// <param name="playersAdded">The amount of players added</param>
+        /// <exception cref="Exception">If more than 6 players are added</exception>
         public static void AddPlayer(string playerName, int playersAdded) {
             if (Application.Current.Windows.Cast<Window>()
                 .FirstOrDefault(window => window is MainWindow) is MainWindow
