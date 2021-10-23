@@ -213,7 +213,7 @@ namespace ScrabbleSolver {
                 }
             }
 
-            ScrabbleSolver.Players.UpdateScores(GamePlayers);
+            Players.UpdateScores(GamePlayers);
 
             PreviousBoard = (string[,]) boxesArray.Clone();
         }
@@ -476,6 +476,7 @@ namespace ScrabbleSolver {
                 
                 Players.AddPlayer(player.Name, PlayersAdded - 1);
             }
+            Players.UpdateScores(GamePlayers);
         }
     }
 }
