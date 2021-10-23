@@ -358,7 +358,7 @@ namespace ScrabbleSolver {
         }
 
         /// <summary>
-        /// Saves the game board, players and scores, and your letters
+        /// Saves the game board, players, scores, turn, and letters
         /// </summary>
         private void SaveGameClick(object sender, RoutedEventArgs e) {
             Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
@@ -424,6 +424,9 @@ namespace ScrabbleSolver {
             File.WriteAllText(path, json);
         }
 
+        /// <summary>
+        /// Restores the game board, players, scores, turn, and letters
+        /// </summary>
         private void RestoreGameClick(object sender, RoutedEventArgs e) {
             PlayersAdded = 0;
             
