@@ -474,7 +474,8 @@ namespace ScrabbleSolver {
                 GamePlayers[PlayersAdded] = player;
                 Order[PlayersAdded] = player.Name;
                 PlayersAdded++;
-                
+
+                Players.AddPlayer(player.Name, PlayersAdded);
             }
         }
     }
