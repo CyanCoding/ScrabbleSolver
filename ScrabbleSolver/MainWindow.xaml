@@ -15,7 +15,7 @@
                 <MenuItem Header="Reset game"/>
             </MenuItem>
             <MenuItem Header="Action">
-                <MenuItem Header="Clear letters"/>
+                <MenuItem Header="Clear letters" Click="ClearBoardClick"/>
                 <MenuItem Header="Override scoring"/>
                 <MenuItem Header="Override player turn"/>
                 <MenuItem Header="Override board" Click="OverrideBoardClick"/>

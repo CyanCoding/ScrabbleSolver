@@ -491,5 +491,24 @@ namespace ScrabbleSolver {
             _turnNumber = save.Turn;
             TurnTextBox.Text = "Turn: " + Order[_turnNumber];
         }
+        
+        /// <summary>
+        /// Clears the game board
+        /// </summary>
+        private void ClearBoardClick(object sender, RoutedEventArgs e) {
+            // Iterates over the board and for each text box in the baord,
+            // set text to ""
+            foreach (var b in BoardGrid.Children) {
+                if (b is Border border) {
+                    Object t = border.Child;
+                    
+                    if (!(t is TextBox box)) continue;
+
+                    box.Text = "";
+                    var y = (int)border.GetValue(Grid.RowProperty);
+                    var x = (int)border.GetValue(Grid.ColumnProperty);
+                }
+            }
+        }
     }
 }
