@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using System.Windows.Documents;
-using System.Windows.Media.Animation;
 
 namespace ScrabbleSolver {
     /// <summary>
@@ -77,52 +74,299 @@ namespace ScrabbleSolver {
 
             return foundPlaces;
         }
-        
-        
-        public static List<List<MainWindow.LocationData>> FindLetterPositions(
+
+        /// <summary>
+        /// Gets every position your letters can be played in
+        /// </summary>
+        /// <param name="testSpot">The spot to test for</param>
+        /// <param name="letters">The letters available</param>
+        /// <param name="boxesArray">The board</param>
+        /// <returns>A list of lists of positions</returns>
+        private static List<List<MainWindow.LocationData>> FindLetterPositions(
             MainWindow.LocationData testSpot,
             string letters,
             string[,] boxesArray) {
             List<List<MainWindow.LocationData>> lists =
                 new List<List<MainWindow.LocationData>>();
             
-            // Finds the vertical positions
-            for (int i = 0; i < /*letters.Length*/ 1; i++) {
+            // Finds the vertical positions kinda randomly
+            int currentY = testSpot.Y;
+            int up = letters.Length + 1;
+            int down = 0;
+            for (int i = 0; i < letters.Length; i++) {
+                up--;
+                down++;
+            
+                List<MainWindow.LocationData> newList =
+                    new List<MainWindow.LocationData>();
+            
+                int resetUp = up;
+                for (int j = 0; j < up; j++) {
+                    try {
+                        while (boxesArray[currentY + j, testSpot.X] != "") {
+                            j++;
+                            up++;
+                        }
+                    
+                        MainWindow.LocationData location =
+                            new MainWindow.LocationData();
+                        location.X = testSpot.X;
+                        location.Y = currentY + j;
+            
+                        if (!newList.Contains(location)) {
+                            newList.Add(location);
+                        }
+                    }
+                    catch (IndexOutOfRangeException) {
+                        break;
+                    }
+                }
+            
+                up = resetUp;
+                
+                int resetDown = down;
+                for (int j = 0; j < down; j++) {
+                    try {
+                        while (boxesArray[currentY - j, testSpot.X] != "") {
+                            j--;
+                            down--;
+                        }
+                    
+                        MainWindow.LocationData location =
+                            new MainWindow.LocationData();
+                        location.X = testSpot.X;
+                        location.Y = currentY - j;
+            
+                        if (!newList.Contains(location)) {
+                            newList.Add(location);
+                        }
+                    }
+                    catch (IndexOutOfRangeException) {
+                        break;
+                    }
+                }
+            
+                down = resetDown;
+                lists.Add(newList);
+            } 
+            
+            // Finds the horizontal positions kinda randomly
+            int currentX = testSpot.X;
+            int left = letters.Length + 1;
+            int right = 0;
+            for (int i = 0; i < letters.Length; i++) {
+                left--;
+                right++;
+            
+                List<MainWindow.LocationData> newList =
+                    new List<MainWindow.LocationData>();
+            
+                int resetLeft = left;
+                for (int j = 0; j < left; j++) {
+                    try {
+                        while (boxesArray[testSpot.Y, currentX + j] != "") {
+                            j++;
+                            left++;
+                        }
+
+                        MainWindow.LocationData location =
+                            new MainWindow.LocationData();
+                        location.X = currentX + j;
+                        location.Y = testSpot.Y;
+
+                        if (!newList.Contains(location)) {
+                            newList.Add(location);
+                        }
+                    }
+                    catch (IndexOutOfRangeException) {
+                        break;
+                    }
+
+                }
+            
+                left = resetLeft;
+                
+                int resetRight = right;
+                for (int j = 0; j < right; j++) {
+                    try {
+                        while (boxesArray[testSpot.Y, currentX - j] != "") {
+                            j--;
+                            right--;
+                        }
+                    
+                        MainWindow.LocationData location =
+                            new MainWindow.LocationData();
+                        location.X = currentX - j;
+                        location.Y = testSpot.Y;
+            
+                        if (!newList.Contains(location)) {
+                            newList.Add(location);
+                        }
+                    }
+                    catch (IndexOutOfRangeException) {
+                        break;
+                    }
+                }
+            
+                right = resetRight;
+                lists.Add(newList);
+            }
+            
+            // Finds vertical letters UP
+            for (int i = 0; i < letters.Length; i++) {
                 List<MainWindow.LocationData> newList =
                     new List<MainWindow.LocationData>();
                 
-                int currentY = testSpot.Y;
                 for (int j = 0; j < letters.Length; j++) {
-                    if (currentY < 0) {
+                    if (currentY < 0 || currentY > 14) {
                         // The idea is if we hit y = 0 or smaller, we need
                         // to end the array of locations
                         break;
                     }
                     
-                    // If there's a letter here or we're too high
-                    if (boxesArray[currentY, testSpot.X] != "" || currentY > 14) {
-                        // There's a letter in this position! Move up
+                    // If there's a letter here
+                    if (boxesArray[currentY, testSpot.X] != "") {
+                        // There's a letter in this position! Move down
                         j--;
                         currentY--;
                         continue;
                     }
-
+            
                     if (boxesArray[currentY, testSpot.X] == "") {
                         MainWindow.LocationData location =
                             new MainWindow.LocationData();
                         location.X = testSpot.X;
                         location.Y = currentY;
-                        
-                        newList.Add(location);
+            
+                        if (!newList.Contains(location)) {
+                            newList.Add(location);
+                        }
                     }
-
+            
                     currentY--;
                 }
                 // Adds our combination list to the main list
                 lists.Add(newList);
-                
-                currentY = testSpot.Y + 1;
+                currentY++;
+                while (boxesArray[currentY, testSpot.X] != "") {
+                    currentY++;
+                }
             }
+            
+            // Finds the vertical DOWN positions
+            // currentY = testSpot.Y;
+            // for (int i = 0; i < letters.Length; i++) {
+            //     List<MainWindow.LocationData> newList =
+            //         new List<MainWindow.LocationData>();
+            //     
+            //     for (int j = 0; j < letters.Length; j++) {
+            //         if (currentY > 14) {
+            //             // The idea is if we hit y = 14 or higher, we need
+            //             // to end the array of locations
+            //             break;
+            //         }
+            //         
+            //         // If there's a letter here
+            //         if (boxesArray[currentY, testSpot.X] != "") {
+            //             // There's a letter in this position! Move down
+            //             j--;
+            //             currentY++;
+            //             continue;
+            //         }
+            //
+            //         if (boxesArray[currentY, testSpot.X] == "") {
+            //             MainWindow.LocationData location =
+            //                 new MainWindow.LocationData();
+            //             location.X = testSpot.X;
+            //             location.Y = currentY;
+            //
+            //             if (!newList.Contains(location)) {
+            //                 newList.Add(location);
+            //             }
+            //         }
+            //         
+            //         currentY++;
+            //     }
+            //     // Adds our combination list to the main list
+            //     lists.Add(newList);
+            // }
+            //
+            // // Find the horizontal left positions
+            // for (int i = 0; i < letters.Length; i++) {
+            //     List<MainWindow.LocationData> newList =
+            //         new List<MainWindow.LocationData>();
+            //     
+            //     for (int j = 0; j < letters.Length; j++) {
+            //         if (currentX < 0) {
+            //             // The idea is if we hit x = 0 or smaller, we need
+            //             // to end the array of locations
+            //             break;
+            //         }
+            //         
+            //         // If there's a letter here
+            //         if (boxesArray[testSpot.Y, currentX] != "") {
+            //             // There's a letter in this position! Move up
+            //             j--;
+            //             currentX--;
+            //             continue;
+            //         }
+            //
+            //         if (boxesArray[testSpot.Y, currentX] == "") {
+            //             MainWindow.LocationData location =
+            //                 new MainWindow.LocationData();
+            //             location.X = currentX;
+            //             location.Y = testSpot.Y;
+            //
+            //             if (!newList.Contains(location)) {
+            //                 newList.Add(location);
+            //             }
+            //         }
+            //
+            //         currentX--;
+            //     }
+            //     // Adds our combination list to the main list
+            //     lists.Add(newList);
+            // }
+            // // Finds the horizontal RIGHT positions
+            // currentX = testSpot.X;
+            // for (int i = 0; i < letters.Length; i++) {
+            //     List<MainWindow.LocationData> newList =
+            //         new List<MainWindow.LocationData>();
+            //     
+            //     for (int j = 0; j < letters.Length; j++) {
+            //         if (currentX > 14) {
+            //             // The idea is if we hit x = 14 or higher, we need
+            //             // to end the array of locations
+            //             break;
+            //         }
+            //         
+            //         // If there's a letter here
+            //         if (boxesArray[testSpot.Y, currentX] != "") {
+            //             // There's a letter in this position! Move up
+            //             j--;
+            //             currentX++;
+            //             continue;
+            //         }
+            //
+            //         if (boxesArray[testSpot.Y, currentX] == "") {
+            //             MainWindow.LocationData location =
+            //                 new MainWindow.LocationData();
+            //             location.X = currentX;
+            //             location.Y = testSpot.Y;
+            //
+            //             if (!newList.Contains(location)) {
+            //                 newList.Add(location);
+            //             }
+            //         }
+            //
+            //         currentX++;
+            //     }
+            //     // Adds our combination list to the main list
+            //     lists.Add(newList);
+            // }
+
+            // Removes duplicates
+            //lists = lists.Distinct().ToList();
 
             return lists;
         }
@@ -140,7 +384,7 @@ namespace ScrabbleSolver {
             string[,] boxesArray,
             int index,
             string letters,
-            List<string> anagrams,
+            List<List<string>> anagrams,
             List<MainWindow.LocationData> foundPlaces) {
             
             // The resulting board configs
@@ -158,56 +402,63 @@ namespace ScrabbleSolver {
                 new MainWindow.LocationData[letters.Length];
 
             var everyPos = FindLetterPositions(testSpot, letters, boxesArray);
-            
-            // This contains each anagram, so we can check if one has already
-            // be found
-            List<string> anagramsFound = new List<string>();
 
-            foreach (List<MainWindow.LocationData> dataList in everyPos) {
-                for (int i = 0; i < letters.Length; i++) {
-                    // For each anagram at each length
-                    foreach (string anagram in anagrams) {
-                        // We add letters to this as we progress
-                        // For each letter of each anagram
-                        for (int j = 0; j <= i; j++) {
-                            // Avoid argument out of bounds exceptions
-                            if (i >= dataList.Count) {
-                                break;
+            for (int i = 0; i < everyPos.Count; i++) {
+                var dataList = everyPos[i];
+                // There are some instances when dataList count is 0
+                if (dataList.Count == 0) {
+                    continue;
+                }
+
+                for (int j = 0; j < letters.Length; j++) {
+                    if (j >= dataList.Count) {
+                        break;
+                    }
+                    foreach (string anagram in anagrams[j]) {
+                        for (int k = 0; k <= j; k++) {
+
+                            int y = dataList[k].Y;
+                            int x = dataList[k].X;
+                            string l = anagram[k] + "";
+
+                            if (y < 0 || y > 14 || x < 0 || x > 14) {
+                                continue;
                             }
-                            
-                            int y = dataList[j].Y;
-                            int x = dataList[j].X;
-                            string l = anagram[j] + "";
-
                             copyBox[y, x] = l;
-                        
+
                             MainWindow.LocationData newLocation;
                             newLocation.Y = y;
                             newLocation.X = x;
                             newLocation.Letter = l;
 
-                            filledLocations[j] = newLocation;
+                            filledLocations[k] = newLocation;
                         }
+
                         // Add the new board configuration to results
                         MainWindow.NewBoardConfig config;
                         config.NewLocations = filledLocations.ToList();
                         config.Board = copyBox;
                         copyBox = (string[,]) boxesArray.Clone();
+                        
+                        results.Add(config);
+                    }
+                }
+            }
 
-                        bool addedTo = false;
-
-                        foreach (var result in results) {
-                            var locations = result.NewLocations;
-                            if (locations.SequenceEqual(config.NewLocations)) {
-                                addedTo = true;
-                            }
-                        }
-
-                        if (!addedTo) {
-                            results.Add(config);
+            for (int i = 0; i < results.Count; i++) {
+                bool removeVal = true;
+                var board = results[i].Board;
+                for (int j = 0; j < 14; j++) {
+                    for (int k = 0; k < 14; k++) {
+                        if (board[j, k] != boxesArray[j, k]) {
+                            removeVal = false;
                         }
                     }
-                }   
+                }
+
+                if (removeVal) {
+                    results.RemoveAt(i);
+                }
             }
 
             return results;

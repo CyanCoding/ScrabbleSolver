@@ -33,7 +33,9 @@ namespace ScrabbleSolver {
         public static int PlayersAdded = 0; // Stores amount of players
         public static Players[] GamePlayers = new Players[6];
         public static string[] Order = new string[6];
-        private List<string> _anagrams;
+        private List<List<string>> _anagrams;
+
+        private static string[,] debugBoard;
 
         public MainWindow() {
             InitializeComponent();
@@ -242,45 +244,68 @@ namespace ScrabbleSolver {
         private int _viewing;
         private List<NewBoardConfig> _results;
         private void NextDebugButtonSelected(object sender, RoutedEventArgs e) {
-            // Create results if it's the first run
-            if (_viewing == 0) {
-                _results = new List<NewBoardConfig>();
-                var thread = new Thread(() => {
-                    Dispatcher.Invoke(() => {
-                        string letters = YourLettersBox.Text;
-                        var boxesArray = FillBoard();
+            _viewing = 0;
+            foreach (var b in BoardGrid.Children) {
+                if (b is Border border) {
+                    Object t = border.Child;
+                    
+                    if (!(t is TextBox box)) continue;
+                    
+                    box.IsReadOnly = _isReadOnly;
+                    var y = (int)border.GetValue(Grid.RowProperty);
+                    var x = (int)border.GetValue(Grid.ColumnProperty);
+                    box.Text = debugBoard[y, x];
+                }
+            }
+            
+            _results = new List<NewBoardConfig>();
+            string letters = YourLettersBox.Text.ToUpper();
+            var thread = new Thread(() => {
+                Dispatcher.Invoke(() => {
+                    
+                    var boxesArray = FillBoard();
 
-                        var positions = Fill.FindAllPlaces(boxesArray);
+                    var positions = Fill.FindAllPlaces(boxesArray);
 
-                        // Check if Anagrams has been filled or not
-                        if (_anagrams == null) {
-                            _anagrams = Anagram.GetAnagrams(letters);
+                    // Check if Anagrams has been filled or not
+                    if (_anagrams == null) {
+                        _anagrams = Anagram.GetAnagrams(letters);
+                    }
+
+                    // for (int i = -1; i < positions.Count; ++i) {
+                    //     var positionThreads = new Thread(() => {
+                    //         var newResults = Fill.FillFromPosition(boxesArray, i, letters,
+                    //             _anagrams, positions);
+                    //
+                    //         lock (_results) {
+                    //             foreach (var result in newResults) {
+                    //                 _results.Add(result);
+                    //             }
+                    //         }
+                    //     });
+                    //     positionThreads.Start();
+                    // }
+
+                    for (int i = 0; i < positions.Count; i++) {
+                        var newResults = Fill.FillFromPosition(boxesArray, i, letters,
+                            _anagrams, positions);
+                        foreach (var result in newResults) {
+                            _results.Add(result);
                         }
-                        
-                        // Gets our array of boards and locations
-                        for (int i = 0; i < positions.Count; i++) {
-                            var newResults = Fill.FillFromPosition(boxesArray, i, letters,
-                                _anagrams, positions);
+                    }
 
-                            foreach (var result in newResults) {
-                                _results.Add(result);
-                            }
-                        }
+                    // var newResults = Fill.FillFromPosition(boxesArray, 0, letters,
+                    //     _anagrams, positions);
 
+                    // foreach (var result in newResults) {
+                    //     _results.Add(result);
+                    // }
+                    FirstDebugLabel.Text = "Viewing " + _viewing + "/" + _results.Count;
                         
-                        FirstDebugLabel.Text = "Viewing " + _viewing + "/" + _results.Count;
-                        _viewing++;
-                    });
+                    _viewing++;
                 });
-                thread.Start();
-            }
-            else {
-                NewBoardConfig config = _results[_viewing - 1];
-                SetBoard(config.Board);
-                
-                FirstDebugLabel.Text = "Viewing " + _viewing + "/" + _results.Count;
-                _viewing++;
-            }
+            });
+            thread.Start();
         }
 
         private void FirstDebugButton_OnClick(object sender, RoutedEventArgs e) {
@@ -288,23 +313,31 @@ namespace ScrabbleSolver {
             SetBoard(config.Board);
                 
             FirstDebugLabel.Text = "Viewing " + _viewing + "/" + _results.Count;
-            _viewing += 25;
+            _viewing += 250;
         }
 
         private void OverrideBoardClick(object sender, RoutedEventArgs e) {
             bool isEditing = false;
             // We allow the user to edit the board without changing scoring
+            // An array of TextBox objects from our board
+            var boxesArray = new string[15, 15];
+
             foreach (var b in BoardGrid.Children) {
                 if (b is Border border) {
                     Object t = border.Child;
                     
                     if (!(t is TextBox box)) continue;
                     
+                    var y = (int)border.GetValue(Grid.RowProperty);
+                    var x = (int)border.GetValue(Grid.ColumnProperty);
+                    boxesArray[y, x] = box.Text.ToUpper();
+                    
                     box.IsReadOnly = !box.IsReadOnly;
                     box.Text = box.Text.ToUpper();
                     if (box.IsReadOnly == true) {
                         isEditing = true;
                     }
+                    
                 }
             }
 
@@ -316,6 +349,7 @@ namespace ScrabbleSolver {
 
                 MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
             }
+            debugBoard = (string[,]) boxesArray.Clone();
         }
     }
 }
