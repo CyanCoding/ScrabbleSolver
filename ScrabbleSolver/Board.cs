@@ -27,8 +27,7 @@ namespace ScrabbleSolver {
             string thisLetter;
 
             // Add this location to the data
-            var thisLocation = new MainWindow.LocationData
-                {
+            var thisLocation = new MainWindow.LocationData {
                     X = x,
                     Y = y
                 };
