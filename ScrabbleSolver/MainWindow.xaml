@@ -113,7 +113,7 @@
 
             <!-- Middle box -->
             <Border Grid.Row="7" Grid.Column="7" BorderBrush="Gold" BorderThickness="2">
-                <TextBox x:Name="Box7X7" Text="H" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+                <TextBox x:Name="Box7X7" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
             </Border>
 
             <!-- 3x word score borders -->
@@ -534,7 +534,7 @@
                 <TextBox x:Name="Box6X5" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
             </Border>
             <Border Grid.Row="6" Grid.Column="7" BorderBrush="LightGray" BorderThickness="2">
-                <TextBox x:Name="Box6X7" Text="O" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+                <TextBox x:Name="Box6X7" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
             </Border>
             <Border Grid.Row="6" Grid.Column="9" BorderBrush="LightGray" BorderThickness="2">
                 <TextBox x:Name="Box6X9" Text="" MaxLength="1" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
