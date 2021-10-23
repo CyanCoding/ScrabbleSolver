@@ -425,6 +425,8 @@ namespace ScrabbleSolver {
         }
 
         private void RestoreGameClick(object sender, RoutedEventArgs e) {
+            PlayersAdded = 0;
+            
             Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
             // Set filter for file extension and default file extension 
             dlg.DefaultExt = ".ss";
