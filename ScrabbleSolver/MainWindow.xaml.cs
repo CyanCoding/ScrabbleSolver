@@ -444,10 +444,12 @@ namespace ScrabbleSolver {
             
             var json = File.ReadAllText(path);
             // TODO: We're having issues deserializing
-            GameManifest save =
-                JsonConvert.DeserializeObject<GameManifest>(json);
+            List<GameManifest> readData =
+                JsonConvert.DeserializeObject<List<GameManifest>>(json);
 
-            string[,] board = new string[14, 14];
+            GameManifest save = readData[0];
+
+            string[,] board = new string[15, 15];
             for (int i = 0; i < 14; i++) {
                 var subBoard = save.Board[i];
                 for (int j = 0; j < 14; j++) {
