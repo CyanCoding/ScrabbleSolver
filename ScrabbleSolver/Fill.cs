@@ -17,57 +17,49 @@ namespace ScrabbleSolver {
             List<MainWindow.LocationData> foundPlaces =
                 new List<MainWindow.LocationData>();
             foundPlaces.Clear();
+            
+            var newBoard = (string[,]) boxesArray.Clone();
 
-
-            for (var i = 0; i < boxesArray.GetLength(0); i++) {
-                for (var j = 0; j < boxesArray.GetLength(1); j++) {
+            for (var i = 0; i < newBoard.GetLength(0); i++) {
+                for (var j = 0; j < newBoard.GetLength(1); j++) {
                     MainWindow.LocationData l =
                         new MainWindow.LocationData();
 
                     // For each available position, count and then set that
                     // position to a number so we don't count that position again
-                    if (boxesArray[i, j] != "" && boxesArray[i, j] != "1") {
-                        if (i > 0 && boxesArray[i - 1, j] == "") {
+                    if (newBoard[i, j] != "" && newBoard[i, j] != "1") {
+                        if (i > 0 && newBoard[i - 1, j] == "") {
                             l.Y = i - 1;
                             l.X = j;
                             foundPlaces.Add(l);
 
-                            boxesArray[i - 1, j] = "1";
+                            newBoard[i - 1, j] = "1";
 
                         }
 
-                        if (i < 14 && boxesArray[i + 1, j] == "") {
+                        if (i < 14 && newBoard[i + 1, j] == "") {
                             l.Y = i + 1;
                             l.X = j;
                             foundPlaces.Add(l);
 
-                            boxesArray[i + 1, j] = "1";
+                            newBoard[i + 1, j] = "1";
                         }
 
-                        if (j > 0 && boxesArray[i, j - 1] == "") {
+                        if (j > 0 && newBoard[i, j - 1] == "") {
                             l.Y = i;
                             l.X = j - 1;
                             foundPlaces.Add(l);
 
-                            boxesArray[i, j - 1] = "1";
+                            newBoard[i, j - 1] = "1";
                         }
 
-                        if (j < 14 && boxesArray[i, j + 1] == "") {
+                        if (j < 14 && newBoard[i, j + 1] == "") {
                             l.Y = i;
                             l.X = j + 1;
                             foundPlaces.Add(l);
 
-                            boxesArray[i, j + 1] = "1";
+                            newBoard[i, j + 1] = "1";
                         }
-                    }
-                }
-            }
-            
-            // Reset the array after we modified it
-            for (int i = 0; i < 14; i++) {
-                for (int j = 0; j < 14; j++) {
-                    if (boxesArray[i, j] == "1") {
-                        boxesArray[i, j] = "";
                     }
                 }
             }
