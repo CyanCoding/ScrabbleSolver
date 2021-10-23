@@ -1,4 +1,11 @@
-﻿using System;
+﻿// Author: Camden Mac Leod
+//
+// Note: When referring to the board two-dimensional array, I refer to the
+// "top" as the visually top of the board (y = 0). However, this is a
+// big project so I might sometimes mix up the top/bottom. Always check the
+// nearby code to make sure you're editing the REAL top or bottom based on y.
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
