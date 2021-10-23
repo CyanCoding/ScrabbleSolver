@@ -6,7 +6,6 @@ namespace ScrabbleSolver {
     /// Points value
     /// </summary>
     class Points {
-        // TODO: Move point scoring here?
         public readonly Dictionary<string,int> Map = new Dictionary<string, int>();
         public Points() {
             Map.Add("a", 1);
