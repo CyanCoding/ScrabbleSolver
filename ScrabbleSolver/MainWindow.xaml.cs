@@ -442,7 +442,7 @@ namespace ScrabbleSolver {
             }
             
             var json = File.ReadAllText(path);
-            // TODO: We're having issues deserializing
+            
             List<GameManifest> readData =
                 JsonConvert.DeserializeObject<List<GameManifest>>(json);
 
