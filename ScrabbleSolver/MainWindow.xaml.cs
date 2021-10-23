@@ -42,12 +42,22 @@ namespace ScrabbleSolver {
         public static int PlayersAdded = 0; // Stores amount of players
         public static PlayerData[] GamePlayers = new PlayerData[6];
         public static string[] Order = new string[6];
+        
+        // List of anagrams at each word length
         private List<List<string>> _anagrams;
-
+        // A list of dictionary words in dictionary.txt
+        private List<string> _dictionary;
+        // A backup board that's used in the debugging process ONLY
         private static string[,] _debugBoard;
 
         public MainWindow() {
             InitializeComponent();
+        }
+
+        private List<string> FillDictionary() {
+            string dictionaryPath = "dictionary.txt";
+            string[] lines = File.ReadAllLines(dictionaryPath);
+            return lines.ToList();
         }
 
         private void AddPlayerMenuItemClick(object sender, RoutedEventArgs e) {
@@ -279,6 +289,10 @@ namespace ScrabbleSolver {
                     // Check if Anagrams has been filled or not
                     if (_anagrams == null) {
                         _anagrams = Anagram.GetAnagrams(letters);
+                    }
+
+                    if (_dictionary == null) {
+                        _dictionary = FillDictionary();
                     }
 
                     // for (int i = -1; i < positions.Count; ++i) {
