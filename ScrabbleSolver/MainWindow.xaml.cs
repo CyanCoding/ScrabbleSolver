@@ -462,19 +462,18 @@ namespace ScrabbleSolver {
             for (int i = 0; i < 6; i++) {
                 var player = new PlayerData();
 
-                if (player.Name == null) {
-                    continue;
-                }
-                
                 var subList = save.Players[i];
                 player.Name = subList[0];
                 player.Points = Int32.Parse(subList[1]);
+                
+                if (player.Name == null) {
+                    continue;
+                }
 
                 GamePlayers[PlayersAdded] = player;
                 Order[PlayersAdded] = player.Name;
                 PlayersAdded++;
                 
-                // TODO: This isn't adding names
                 Players.AddPlayer(player.Name, PlayersAdded - 1);
             }
         }
