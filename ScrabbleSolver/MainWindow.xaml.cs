@@ -460,6 +460,8 @@ namespace ScrabbleSolver {
                     board[i, j] = subBoard[j];
                 }
             }
+            
+            _debugBoard = (string[,]) board.Clone();
 
             SetBoard(board);
             // Set letters
