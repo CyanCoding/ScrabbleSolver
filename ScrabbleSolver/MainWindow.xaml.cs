@@ -462,6 +462,11 @@ namespace ScrabbleSolver {
 
             for (int i = 0; i < 6; i++) {
                 var player = new PlayerData();
+
+                if (player.Name == null) {
+                    continue;
+                }
+                
                 var subList = save.Players[i];
                 player.Name = subList[0];
                 player.Points = Int32.Parse(subList[1]);
