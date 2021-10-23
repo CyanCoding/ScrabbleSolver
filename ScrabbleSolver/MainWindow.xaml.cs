@@ -37,7 +37,7 @@ namespace ScrabbleSolver {
         public static string[] Order = new string[6];
         private List<List<string>> _anagrams;
 
-        private static string[,] debugBoard;
+        private static string[,] _debugBoard;
 
         public MainWindow() {
             InitializeComponent();
@@ -256,7 +256,7 @@ namespace ScrabbleSolver {
                     box.IsReadOnly = _isReadOnly;
                     var y = (int)border.GetValue(Grid.RowProperty);
                     var x = (int)border.GetValue(Grid.ColumnProperty);
-                    box.Text = debugBoard[y, x];
+                    box.Text = _debugBoard[y, x];
                 }
             }
             
@@ -354,7 +354,7 @@ namespace ScrabbleSolver {
 
                 MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
             }
-            debugBoard = (string[,]) boxesArray.Clone();
+            _debugBoard = (string[,]) boxesArray.Clone();
         }
 
         private void SaveGameClick(object sender, RoutedEventArgs e) {
