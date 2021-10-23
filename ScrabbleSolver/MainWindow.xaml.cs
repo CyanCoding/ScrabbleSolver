@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using Newtonsoft.Json;
 
 namespace ScrabbleSolver {
     /// <summary>
@@ -285,6 +287,8 @@ namespace ScrabbleSolver {
                     //     });
                     //     positionThreads.Start();
                     // }
+                    
+                    // TODO: There's a million duplicates and it's putting letters in invalid places
 
                     for (int i = 0; i < positions.Count; i++) {
                         var newResults = Fill.FillFromPosition(boxesArray, i, letters,
@@ -310,10 +314,11 @@ namespace ScrabbleSolver {
 
         private void FirstDebugButton_OnClick(object sender, RoutedEventArgs e) {
             NewBoardConfig config = _results[_viewing - 1];
+            
             SetBoard(config.Board);
                 
             FirstDebugLabel.Text = "Viewing " + _viewing + "/" + _results.Count;
-            _viewing += 250;
+            _viewing += 1;
         }
 
         private void OverrideBoardClick(object sender, RoutedEventArgs e) {
@@ -350,6 +355,31 @@ namespace ScrabbleSolver {
                 MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
             }
             debugBoard = (string[,]) boxesArray.Clone();
+        }
+
+        private void SaveGameClick(object sender, RoutedEventArgs e) {
+            
+        }
+
+        private void RestoreGameClick(object sender, RoutedEventArgs e) {
+            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+            // Set filter for file extension and default file extension 
+            dlg.DefaultExt = ".ss";
+            dlg.Filter = "ScrabbleSolver Data |*.ss";
+            
+            // Display OpenFileDialog by calling ShowDialog method 
+            bool? result = dlg.ShowDialog();
+            
+            // Get the selected file name and display in a TextBox 
+            var path = "";
+            if (result == true) {
+                // Open document 
+                path = dlg.FileName;
+            }
+            
+            var json = File.ReadAllText(path);
+            GameManifest myDeserializedClass =
+                JsonConvert.DeserializeObject<GameManifest>(json);
         }
     }
 }

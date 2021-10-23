@@ -10,8 +10,8 @@
         <Menu Height="22" HorizontalAlignment="Stretch" VerticalAlignment="Top">
             <MenuItem Header="File">
                 <MenuItem Header="Open last game"/>
-                <MenuItem Header="Open game"/>
-                <MenuItem Header="Save game"/>
+                <MenuItem Header="Open game" Click="RestoreGameClick"/>
+                <MenuItem Header="Save game" Click="SaveGameClick"/>
                 <MenuItem Header="Reset game"/>
             </MenuItem>
             <MenuItem Header="Action">
