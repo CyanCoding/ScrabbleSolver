@@ -383,7 +383,6 @@ namespace ScrabbleSolver {
                     
                     if (!(t is TextBox box)) continue;
                     
-                    box.IsReadOnly = _isReadOnly;
                     box.Text = box.Text.ToUpper();
                     var y = (int)border.GetValue(Grid.RowProperty);
                     var x = (int)border.GetValue(Grid.ColumnProperty);
@@ -393,9 +392,9 @@ namespace ScrabbleSolver {
             
             // Here we convert the array to a list
             var boardList = new List<List<String>>();
-            for (int i = 0; i < 14; i++) {
+            for (int i = 0; i < 15; i++) {
                 var miniList = new List<String>();
-                for (int j = 0; j < 14; j++) {
+                for (int j = 0; j < 15; j++) {
                     miniList.Add(boxesArray[i, j]);
                 }
 
@@ -450,9 +449,9 @@ namespace ScrabbleSolver {
             GameManifest save = readData[0];
 
             string[,] board = new string[15, 15];
-            for (int i = 0; i < 14; i++) {
+            for (int i = 0; i < 15; i++) {
                 var subBoard = save.Board[i];
-                for (int j = 0; j < 14; j++) {
+                for (int j = 0; j < 15; j++) {
                     board[i, j] = subBoard[j];
                 }
             }
@@ -474,8 +473,9 @@ namespace ScrabbleSolver {
                 GamePlayers[PlayersAdded] = player;
                 Order[PlayersAdded] = player.Name;
                 PlayersAdded++;
-
-                Players.AddPlayer(player.Name, PlayersAdded);
+                
+                // TODO: This isn't adding names
+                Players.AddPlayer(player.Name, PlayersAdded - 1);
             }
         }
     }
