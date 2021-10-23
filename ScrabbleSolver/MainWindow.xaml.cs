@@ -416,6 +416,7 @@ namespace ScrabbleSolver {
             save.Add(new GameManifest() {
                 Board = boardList,
                 Letters = YourLettersBox.Text.ToUpper(),
+                Turn = _turnNumber,
                 Players = players
             });
 
@@ -447,7 +448,8 @@ namespace ScrabbleSolver {
                 JsonConvert.DeserializeObject<List<GameManifest>>(json);
 
             GameManifest save = readData[0];
-
+            
+            // Convert list back to board
             string[,] board = new string[15, 15];
             for (int i = 0; i < 15; i++) {
                 var subBoard = save.Board[i];
@@ -457,8 +459,10 @@ namespace ScrabbleSolver {
             }
 
             SetBoard(board);
+            // Set letters
             YourLettersBox.Text = save.Letters.ToUpper();
-
+            
+            // Adds a new player
             for (int i = 0; i < 6; i++) {
                 var player = new PlayerData();
 
@@ -466,17 +470,23 @@ namespace ScrabbleSolver {
                 player.Name = subList[0];
                 player.Points = Int32.Parse(subList[1]);
                 
+                // Skip if nonexistent
                 if (player.Name == null) {
                     continue;
                 }
-
+                
                 GamePlayers[PlayersAdded] = player;
                 Order[PlayersAdded] = player.Name;
                 PlayersAdded++;
                 
                 Players.AddPlayer(player.Name, PlayersAdded - 1);
             }
+            // Sets the scores
             Players.UpdateScores(GamePlayers);
+            
+            // Set the player turn
+            _turnNumber = save.Turn;
+            TurnTextBox.Text = "Turn: " + Order[_turnNumber];
         }
     }
 }
