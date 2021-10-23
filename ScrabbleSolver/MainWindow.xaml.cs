@@ -357,15 +357,78 @@ namespace ScrabbleSolver {
             _debugBoard = (string[,]) boxesArray.Clone();
         }
 
+        /// <summary>
+        /// Saves the game board, players and scores, and your letters
+        /// </summary>
         private void SaveGameClick(object sender, RoutedEventArgs e) {
+            Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
+            dlg.FileName = "Board"; // Default file name
+            dlg.DefaultExt = ".ss"; // Default file extension
+            dlg.Filter = "ScrabbleSolver Boards (.ss)|*.ss"; // Filter files by extension
+
+            // Show save file dialog box
+            bool? result = dlg.ShowDialog();
+
+            // Process save file dialog box results
+            var path = "";
+            if (result == true) {
+                // Save file path
+                path = dlg.FileName;
+            }
             
+            var boxesArray = new string[15, 15];
+            foreach (var b in BoardGrid.Children) {
+                if (b is Border border) {
+                    Object t = border.Child;
+                    
+                    if (!(t is TextBox box)) continue;
+                    
+                    box.IsReadOnly = _isReadOnly;
+                    box.Text = box.Text.ToUpper();
+                    var y = (int)border.GetValue(Grid.RowProperty);
+                    var x = (int)border.GetValue(Grid.ColumnProperty);
+                    boxesArray[y, x] = box.Text;
+                }
+            }
+            
+            // Here we convert the array to a list
+            var boardList = new List<List<String>>();
+            for (int i = 0; i < 14; i++) {
+                var miniList = new List<String>();
+                for (int j = 0; j < 14; j++) {
+                    miniList.Add(boxesArray[i, j]);
+                }
+
+                boardList.Add(miniList);
+            }
+
+            var players = new List<List<String>>();
+
+            foreach (var player in GamePlayers) {
+                // The format is "name", "points"
+                var l = new List<String>();
+                l.Add(player.Name);
+                l.Add(player.Points + "");
+
+                players.Add(l);
+            }
+
+            List<GameManifest> save = new List<GameManifest>();
+            save.Add(new GameManifest() {
+                Board = boardList,
+                Letters = YourLettersBox.Text.ToUpper(),
+                Players = players
+            });
+
+            string json = JsonConvert.SerializeObject(save.ToArray());
+            File.WriteAllText(path, json);
         }
 
         private void RestoreGameClick(object sender, RoutedEventArgs e) {
             Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
             // Set filter for file extension and default file extension 
             dlg.DefaultExt = ".ss";
-            dlg.Filter = "ScrabbleSolver Data |*.ss";
+            dlg.Filter = "ScrabbleSolver Data (*.ss)|*.ss";
             
             // Display OpenFileDialog by calling ShowDialog method 
             bool? result = dlg.ShowDialog();
@@ -378,8 +441,32 @@ namespace ScrabbleSolver {
             }
             
             var json = File.ReadAllText(path);
-            GameManifest myDeserializedClass =
+            // TODO: We're having issues deserializing
+            GameManifest save =
                 JsonConvert.DeserializeObject<GameManifest>(json);
+
+            string[,] board = new string[14, 14];
+            for (int i = 0; i < 14; i++) {
+                var subBoard = save.Board[i];
+                for (int j = 0; j < 14; j++) {
+                    board[i, j] = subBoard[j];
+                }
+            }
+
+            SetBoard(board);
+            YourLettersBox.Text = save.Letters.ToUpper();
+
+            for (int i = 0; i < 6; i++) {
+                var player = new Players();
+                var subList = save.Players[i];
+                player.Name = subList[0];
+                player.Points = Int32.Parse(subList[1]);
+
+                GamePlayers[PlayersAdded] = player;
+                Order[PlayersAdded] = player.Name;
+                PlayersAdded++;
+                
+            }
         }
     }
 }
