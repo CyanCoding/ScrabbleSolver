@@ -7,12 +7,54 @@ namespace ScrabbleSolver {
     /// </summary>
     public class Rank {
         public static List<string> wordsFound;
+
+        private static bool DetectFloating(MainWindow.LocationData location,
+            string[,] board) {
+
+            int x = location.X;
+            int y = location.Y;
+
+            int checks = 0;
+            if (y == 0) {
+                checks++;
+            }
+            else if (y > 0 && board[y - 1, x] == "") {
+                checks++;
+            }
+
+            if (y == 14) {
+                checks++;
+            }
+            else if (y < 14 && board[y + 1, x] == "") {
+                checks++;
+            }
+            
+            if (x == 0) {
+                checks++;
+            }
+            else if (x > 0 && board[y, x - 1] == "") {
+                checks++;
+            }
+            
+            if (x == 14) {
+                checks++;
+            }
+            else if (x < 14 && board[y, x + 1] == "") {
+                checks++;
+            }
+            
+            // If checks == 4, this means there is a blank spot on every
+            // side of a letter
+            if (checks == 4) {
+                return true;
+            }
+            
+            return false;
+        }
+        
         public static bool RankData(
             MainWindow.NewBoardConfig config,
             List<string> dictionary) {
-
-            // We store ranked data in here
-            var results = new List<MainWindow.NewBoardConfig>();
 
             // For each result, find each item that isn't a blank value
             // and find adjacent ones to see if it's a valid word
@@ -42,6 +84,10 @@ namespace ScrabbleSolver {
 
             // Now operate on each letter we found
             foreach (var place in placesWithLetters) {
+                if (DetectFloating(place, board)) {
+                    return false;
+                }
+                
                 string horizontalWord = "";
                 string verticalWord = "";
 
