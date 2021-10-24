@@ -42,11 +42,11 @@ namespace ScrabbleSolver {
         public static int PlayersAdded = 0; // Stores amount of players
         public static PlayerData[] GamePlayers = new PlayerData[6];
         public static string[] Order = new string[6];
-        
+        // A list of dictionary words in dictionary.txt
+        public static List<string> Dictionary;
+
         // List of anagrams at each word length
         private List<List<string>> _anagrams;
-        // A list of dictionary words in dictionary.txt
-        private List<string> _dictionary;
         // A backup board that's used in the debugging process ONLY
         private static string[,] _debugBoard;
 
@@ -55,9 +55,20 @@ namespace ScrabbleSolver {
         }
 
         private List<string> FillDictionary() {
-            string dictionaryPath = "dictionary.txt";
-            string[] lines = File.ReadAllLines(dictionaryPath);
-            return lines.ToList();
+            try {
+                string dictionaryPath = "dictionary.txt";
+                string[] lines = File.ReadAllLines(dictionaryPath);
+                return lines.ToList();
+            }
+            catch (FileNotFoundException) {
+                var messageBoxText = "Could not locate a valid dictionary file.";
+                var caption = "ScrabbleSolver";
+                var button = MessageBoxButton.OK;
+                var icon = MessageBoxImage.Error;
+
+                MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
+                return new List<string>();
+            }
         }
 
         private void AddPlayerMenuItemClick(object sender, RoutedEventArgs e) {
@@ -287,13 +298,19 @@ namespace ScrabbleSolver {
                     var positions = Fill.FindAllPlaces(boxesArray);
 
                     // Check if Anagrams has been filled or not
-                    if (_anagrams == null) {
-                        _anagrams = Anagram.GetAnagrams(letters);
-                    }
+                    var anagramThread = new Thread(() => {
+                        if (_anagrams == null) {
+                            _anagrams = Anagram.GetAnagrams(letters);
+                        }
+                    });
+                    anagramThread.Start();
 
-                    if (_dictionary == null) {
-                        _dictionary = FillDictionary();
-                    }
+                    var dictionaryThread = new Thread(() => {
+                        if (Dictionary == null) {
+                            Dictionary = FillDictionary();
+                        }
+                    });
+                    dictionaryThread.Start();
 
                     // for (int i = -1; i < positions.Count; ++i) {
                     //     var positionThreads = new Thread(() => {
@@ -310,7 +327,8 @@ namespace ScrabbleSolver {
                     // }
                     
                     // TODO: There's a million duplicates and it's putting letters in invalid places
-
+                    anagramThread.Join();
+                    dictionaryThread.Join();
                     for (int i = 0; i < positions.Count; i++) {
                         var newResults = Fill.FillFromPosition(boxesArray, i, letters,
                             _anagrams, positions);
@@ -318,13 +336,6 @@ namespace ScrabbleSolver {
                             _results.Add(result);
                         }
                     }
-
-                    // var newResults = Fill.FillFromPosition(boxesArray, 0, letters,
-                    //     _anagrams, positions);
-
-                    // foreach (var result in newResults) {
-                    //     _results.Add(result);
-                    // }
                     FirstDebugLabel.Text = "Viewing " + _viewing + "/" + _results.Count;
                         
                     _viewing++;
