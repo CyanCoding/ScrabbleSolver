@@ -49,9 +49,18 @@ namespace ScrabbleSolver {
         private List<List<string>> _anagrams;
         // A backup board that's used in the debugging process ONLY
         private static string[,] _debugBoard;
+        private Thread _dictionaryThread;
+        private Thread _anagramThread;
 
         public MainWindow() {
             InitializeComponent();
+            
+            _dictionaryThread = new Thread(() => {
+                if (Dictionary == null) {
+                    Dictionary = FillDictionary();
+                }
+            });
+            _dictionaryThread.Start();
         }
 
         private List<string> FillDictionary() {
@@ -90,12 +99,12 @@ namespace ScrabbleSolver {
                 // We create a thread to get the anagrams
                 var text = YourLettersBox.Text;
             
-                var thread = new Thread(() => {
+                _anagramThread = new Thread(() => {
                     Dispatcher.Invoke(() => {
                         _anagrams = Anagram.GetAnagrams(text);
                     });
                 });
-                thread.Start();
+                _anagramThread.Start();
 
                 // Send it to uppercase
                 YourLettersBox.Text = YourLettersBox.Text.ToUpper();
@@ -244,6 +253,7 @@ namespace ScrabbleSolver {
             Players.UpdateScores(GamePlayers);
 
             PreviousBoard = (string[,]) boxesArray.Clone();
+            _debugBoard = (string[,]) boxesArray.Clone();
         }
         private void DebugModeItem_OnClick(object sender, RoutedEventArgs e) {
             if (DebugModeItem.IsChecked) {
@@ -263,7 +273,8 @@ namespace ScrabbleSolver {
                 if (b is Border border) {
                     Object t = border.Child;
                     if (!(t is TextBox box)) continue;
-                    
+
+                    box.Text = "";
                     var y = (int)border.GetValue(Grid.RowProperty);
                     var x = (int)border.GetValue(Grid.ColumnProperty);
                     box.Text = boxesArray[y, x];
@@ -298,19 +309,15 @@ namespace ScrabbleSolver {
                     var positions = Fill.FindAllPlaces(boxesArray);
 
                     // Check if Anagrams has been filled or not
-                    var anagramThread = new Thread(() => {
-                        if (_anagrams == null) {
-                            _anagrams = Anagram.GetAnagrams(letters);
-                        }
-                    });
-                    anagramThread.Start();
-
-                    var dictionaryThread = new Thread(() => {
-                        if (Dictionary == null) {
-                            Dictionary = FillDictionary();
-                        }
-                    });
-                    dictionaryThread.Start();
+                    // It MAY be running from when the user clicked solidify
+                    if (!_anagramThread.IsAlive) {
+                        _anagramThread = new Thread(() => {
+                            if (_anagrams == null) {
+                                _anagrams = Anagram.GetAnagrams(letters);
+                            }
+                        });
+                        _anagramThread.Start();
+                    }
 
                     // for (int i = -1; i < positions.Count; ++i) {
                     //     var positionThreads = new Thread(() => {
@@ -326,9 +333,8 @@ namespace ScrabbleSolver {
                     //     positionThreads.Start();
                     // }
                     
-                    // TODO: There's a million duplicates and it's putting letters in invalid places
-                    anagramThread.Join();
-                    dictionaryThread.Join();
+                    _anagramThread.Join();
+                    _dictionaryThread.Join();
                     for (int i = 0; i < positions.Count; i++) {
                         var newResults = Fill.FillFromPosition(boxesArray, i, letters,
                             _anagrams, positions);
@@ -336,6 +342,8 @@ namespace ScrabbleSolver {
                             _results.Add(result);
                         }
                     }
+
+                    var words = Rank.wordsFound;
                     FirstDebugLabel.Text = "Viewing " + _viewing + "/" + _results.Count;
                         
                     _viewing++;
