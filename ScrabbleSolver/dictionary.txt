@@ -5032,7 +5032,6 @@ stretched
 shelter
 awoke
 awoken
-awol
 awry
 handle
 dismissal
