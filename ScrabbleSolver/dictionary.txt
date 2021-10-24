@@ -11024,7 +11024,6 @@ dressed
 salad
 sliced
 raw
-sla
 coleus
 variegated
 coley
@@ -15261,7 +15260,6 @@ statements
 commands
 wanted
 inversion
-dos
 satisfactory
 justice
 flatter
@@ -15339,8 +15337,6 @@ dolorous
 dolour
 dolt
 doltish
-dol
-dom
 benedictine
 attitudes
 vault
@@ -15759,11 +15755,6 @@ unventilated
 fungi
 wetting
 drystone
-dsc
-dsm
-dso
-dss
-dti
 dual
 duality
 shoulders
@@ -23882,7 +23873,6 @@ lancashire
 lancaster
 wars
 lance
-nco
 lancer
 lancet
 landless
@@ -24043,7 +24033,6 @@ laxity
 laxly
 laxness
 facilitating
-laos
 layabout
 lays
 layette
@@ -24727,12 +24716,8 @@ steadfast
 loyally
 loyalist
 loyalism
-lpo
 philharmonic
-lsd
 pence
-lse
-lso
 symphony
 lubber
 lubrication
@@ -27098,8 +27083,6 @@ november
 novena
 probationary
 nowadays
-nowt
-nsw
 nuance
 nub
 nubile
@@ -37656,10 +37639,6 @@ voyager
 voyeur
 voyeurism
 voyeuristic
-vso
-vto
-vtol
-vtr
 vulcanized
 vulcanization
 vulcanologist
@@ -37838,7 +37817,6 @@ waylay
 wayside
 wayward
 waywardness
-wea
 weakish
 weakling
 flaw
