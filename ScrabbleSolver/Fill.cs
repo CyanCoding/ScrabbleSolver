@@ -431,8 +431,9 @@ namespace ScrabbleSolver {
                         config.NewLocations = filledLocations.ToList();
                         config.Board = copyBox;
                         copyBox = (string[,]) boxesArray.Clone();
-                        
-                        results.Add(config);
+                        if (Rank.RankData(config, MainWindow.Dictionary)) {
+                            results.Add(config);
+                        }
                     }
                 }
             }
